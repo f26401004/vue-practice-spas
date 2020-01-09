@@ -2,7 +2,7 @@ const pageList = ['home', 'meeting', 'login', 'register']
 
 const state = {
   currentPage: '',
-  currentUser: ''
+  currentUser: {}
 }
 
 const getters = {
@@ -22,7 +22,7 @@ const mutations = {
     state.currentPage = page
   },
   'SET_currentUser': function (state, user) {
-    state.currentUser = user
+    state.currentUser = Object.assign({}, user)
   }
 }
 
