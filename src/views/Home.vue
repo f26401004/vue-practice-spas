@@ -1,6 +1,6 @@
 <template lang="pug">
   div(style="padding: 24px;")
-    a-row(type="flex" justify="center" align="middle") Welcome back,&nbsp;
+    a-row(type="flex" justify="center" align="middle" v-if="username") Welcome back,&nbsp;
       strong
         span(:style="{ 'color': blue.primary, 'margin-left': '4px' }") {{ username }}
     a-row(type="flex" justify="center" align="middle")

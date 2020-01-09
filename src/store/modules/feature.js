@@ -2,7 +2,7 @@ const pageList = ['home', 'meeting', 'login', 'register']
 
 const state = {
   currentPage: '',
-  currentUser: 'f26401004'
+  currentUser: ''
 }
 
 const getters = {
