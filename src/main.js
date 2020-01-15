@@ -5,8 +5,10 @@ import store from './store'
 
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
+import VueResponsive from 'vue-responsive'
 
 Vue.use(Antd)
+Vue.use(VueResponsive)
 
 Vue.config.productionTip = false
 
