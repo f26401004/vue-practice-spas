@@ -6,9 +6,11 @@ import store from './store'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import VueResponsive from 'vue-responsive'
+import VuePageTransition from 'vue-page-transition'
 
 Vue.use(Antd)
 Vue.use(VueResponsive)
+Vue.use(VuePageTransition)
 
 Vue.config.productionTip = false
 

@@ -1,8 +1,8 @@
 <template lang="pug">
   div(id="register_page_root")
-    a-row(type="flex" justify="center" align="middle")
+    a-row(type="flex" justify="center" align="middle" class="animated fadeIn faster delay-1")
       div(id="register_logo")
-    a-row(type="flex" justify="center" align="middle")
+    a-row(type="flex" justify="center" align="middle" class="animated fadeIn faster delay-1")
       p(style="color: white; margin: 0; text-align: center") Improve meeting scheduling
         | <br/> for your team.
     a-row(type="flex" justify="center" align="middle")
@@ -11,37 +11,36 @@
           a-alert(v-if="errorMessage" type="error" :message="errorMessage" banner)
           a-row(style="margin-top: 12px;")
             a-form(layout="horizontal" :form="form" @submit.prevent="handleSubmit")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-2")
                 a-input(placeholder="Username" type="text"
                   size="large"
-                  autofocus
                   v-decorator="['username', { rules: [{ required: true, message: 'Please input a your username!' }] }]")
                   a-icon(slot="prefix" type="user")
                   a-tooltip(slot="suffix" title="Enter your username here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-3")
                 a-input(placeholder="Email" type="email"
                   size="large"
                   v-decorator="['email', { rules: [{ validator: emailValidator, message: 'Please input a correct email!' }] }]")
                   a-icon(slot="prefix" type="mail")
                   a-tooltip(slot="suffix" title="Enter your email here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-4")
                 a-input(placeholder="Password" type="password"
                   size="large"
                   v-decorator="['password', { rules: [{ required: true, message: 'Please input your password!'}] }]")
                   a-icon(slot="prefix" type="lock")
                   a-tooltip(slot="suffix" title="Enter your password here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-5")
                 a-input(placeholder="Comfirm password" type="password"
                   size="large"
                   v-decorator="['comfirmPassword', { rules: [{ required: true, message: 'Please input your password again!'}, {validator: confirmPasswordValidator, message: 'Please make sure the passwords are the same!'}] }]")
                   a-icon(slot="prefix" type="lock")
                   a-tooltip(slot="suffix" title="Enter your password here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
-              a-form-item
-                a-button(size="large" style="width: 100%;" html-type="submit" ) Register
+              a-form-item(class="animated fadeIn faster delay-6")
+                a-button(size="large" style="width: 100%;" html-type="submit" type="ghost" ) Register
                 router-link(tag="a" style="color: white; float: right;" to="/login") Have an account?
 </template>
 

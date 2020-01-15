@@ -1,7 +1,8 @@
 <template lang="pug">
   div(id="app")
     nav-bar
-    router-view(style="width: 100vw; height: calc(100vh - 96px);")
+    vue-page-transition(name="overlay-down-full")
+      router-view(style="width: 100vw; height: calc(100vh - 96px);")
     a-row(type="flex" justify="center" align="middle" :style="{ 'background-color': blue.primary }" style="height: 32px; color: white; font-size: 12px;")
       p(style="margin: 0;") Copyright © 2020 f26401004 All rights reserved.
 </template>
@@ -55,4 +56,30 @@ export default {
     overflow: hidden;
   }
 
+  .delay-1 {
+    animation-delay: .6s;
+  }
+  .delay-2 {
+    animation-delay: .7s;
+  }
+  .delay-3 {
+    animation-delay: .8s;
+  }
+  .delay-4 {
+    animation-delay: .9s;
+  }
+  .delay-5 {
+    animation-delay: 1.0s;
+  }
+  .delay-6 {
+    animation-delay: 1.1s;
+  }
+
+  .overlay-top, .overlay-bottom, .overlay-right, .overlay-left {
+    background: url("./assets/logo-transition.svg"), #096dd9 !important;
+    background-position: 50% 50% !important;
+    background-size: 18vh, cover !important;
+    background-repeat: no-repeat !important;
+    z-index: 999;
+  }
 </style>

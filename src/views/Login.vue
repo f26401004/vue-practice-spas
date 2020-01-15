@@ -1,10 +1,10 @@
 <template lang="pug">
   div(id="login_page_root")
-    a-row(type="flex" justify="center" align="middle")
+    a-row(type="flex" justify="center" align="middle" class="animated fadeIn faster delay-1")
       div(id="login_logo")
         div
         span
-    a-row(type="flex" justify="center" align="middle")
+    a-row(type="flex" justify="center" align="middle" class="animated fadeIn faster delay-2")
       p(:style="{ 'color': grey[1] }" style="margin: 0; text-align: center") Improve meeting scheduling
         | <br/> for your team.
     a-row(type="flex" justify="center" align="middle")
@@ -13,22 +13,21 @@
           a-alert(v-if="errorMessage" type="error" :message="errorMessage" banner)
           a-row(style="margin-top: 12px;")
             a-form(layout="horizontal" :form="form" @submit.prevent="handleSubmit")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-3")
                 a-input(placeholder="Email" type="email"
                   size="large"
-                  autofocus
                   v-decorator="['email', { rules: [{ validator: emailValidator, message: 'Please input a correct email!' }] }]")
                   a-icon(slot="prefix" type="mail")
                   a-tooltip(slot="suffix" title="Enter your email here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-4")
                 a-input(placeholder="Password" type="password"
                   size="large"
                   v-decorator="['password', { rules: [{ required: true, message: 'Please input your password!'}] }]")
                   a-icon(slot="prefix" type="lock")
                   a-tooltip(slot="suffix" title="Enter your password here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
-              a-form-item
+              a-form-item(class="animated fadeIn faster delay-4")
                 a-checkbox(v-decorator="['remember', { valuePropName: 'checked', initialValue: true }]") Remember me
                 a(style="float: right;") Forgot password
                 a-button(size="large" type="primary" style="width: 100%;" html-type="submit" class="ripple") Login

@@ -1,7 +1,7 @@
 <template lang="pug">
   div(id="home_page_root")
     div(id="home_page_background" class="decorator")
-    div(id="home_page_title" class="decorator")
+    div(id="home_page_title" class="decorator animated fadeIn delay-1")
       a-row(type="flex" justify="center" align="middle")
         h1(style="color: white; margin-top: 24px;") Meetings
       a-row(v-if="user.uid" type="flex" justify="center" style="color: white; font-size: 14px; text-align: center;")
@@ -19,12 +19,12 @@
           a-button(v-show="!user.uid" size="large" type="ghost" style="margin-right: 12px;" ) Register
         router-link(tag="span" to="/login")
           a-button(v-show="!user.uid" size="large" style="margin-right: 12px;" ) Login
-    a-row(type="flex" justify="center" align="middle" style="margin-top: 32vh;")
+    a-row(type="flex" justify="center" align="middle" style="margin-top: 32vh;" class="animated fadeIn delay-2")
       a-col(:xs="20" :sm="12" :md="8" :lg="6")
         p(:style="{ 'color': grey[0], 'text-align': 'center' }") An meeting APP for study group. Developed with <a href="https://vuejs.org/">Vue.js</a>
           | &nbsp;and
           | <a href="https://firebase.google.com">Firebase</a>.
-    a-row(type="flex" justify="center" align="middle")
+    a-row(type="flex" justify="center" align="middle" class="animated fadeIn delay-3")
       a-col(:xs="20" :sm="12" :md="8" :lg="6")
         a-list(itemLayout="horizontal" :dataSource="test" style="font-size: 12px;")
           a-list-item(slot="renderItem" slot-scope="item, index")
@@ -50,19 +50,24 @@ export default {
     return {
       grey,
       blue,
-      test: new Array(3).fill({
-        title: 'Vue practice!!',
-        description: 'Practice vue framework and build a calendar APP for yourself!!',
-        date: new Date(),
-        join: false,
-        icon: ''
-      })
+      test: []
     }
   },
   computed: {
     ...mapGetters('feature', {
       user: 'getCurrentUser'
     })
+  },
+  mounted: function () {
+    // setTimeout(() => {
+    //   this.test = new Array(3).fill({
+    //     title: 'Vue practice!!',
+    //     description: 'Practice vue framework and build a calendar APP for yourself!!',
+    //     date: new Date(),
+    //     join: false,
+    //     icon: ''
+    //   })
+    // }, 1000)
   },
   methods: {
     ...mapMutations('feature', ['SET_currentUser'])
