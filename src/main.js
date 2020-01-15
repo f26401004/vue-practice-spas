@@ -7,10 +7,13 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import VueResponsive from 'vue-responsive'
 import VuePageTransition from 'vue-page-transition'
+import workbox from './registerServiceWorker'
 
 Vue.use(Antd)
 Vue.use(VueResponsive)
 Vue.use(VuePageTransition)
+// add workbox into vue instance
+Vue.prototype.$workbox = workbox
 
 Vue.config.productionTip = false
 
