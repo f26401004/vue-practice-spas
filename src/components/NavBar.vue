@@ -1,26 +1,10 @@
 <template lang="pug">
-  a-layout-header(class="header" :style="{ 'background': blue.primary }" style="padding: 0 24px;")
-    a-row(type="flex" justify="space-between" align="middle")
-      router-link(tag="div" to="/" style="display: flex; align-content: center;")
-        h2(style="display: inline; margin: 0;" :style="{ 'color': blue[0] }") Meetings
-      a-icon(v-responsive.sm.xs style="color: white;" :type="displayDrawer ? 'menu-unfold': 'menu-fold'" @click="displayDrawer = !displayDrawer")
-      a-drawer(v-responsive.sm.xs title="Menu" :closable="true" :visible="displayDrawer" placement="right" @close="displayDrawer = false")
-        a-menu(theme="light" mode="vertical" :style="{ 'line-height': '64px' }")
-          a-menu-item
-            router-link(tag="span" to="/meeting" @click.native="displayDrawer = false") meetings
-          a-menu-item(v-show="!user.uid")
-            router-link(tag="span" to="/login" @click.native="displayDrawer = false") login
-          a-menu-item(v-show="user.uid" @click="handleLogout") logout
-          a-menu-item
-            router-link(tag="span" to="/register" @click.native="displayDrawer = false") register
-      a-menu(v-responsive.md.lg.xl theme="dark" mode="horizontal" :style="{ 'line-height': '64px', 'background': blue.primary }")
-        a-menu-item
-          router-link(tag="span" to="/meeting") meetings
-        a-menu-item(v-show="!user.uid")
-          router-link(tag="span" to="/login") login
-        a-menu-item(v-show="user.uid" @click="handleLogout") logout
-        a-menu-item
-          router-link(tag="span" to="/register") register
+  div(id="nav_bar_root")
+    a-menu(id="nav_bar_menu" theme="dark" mode="horizontal" :selectedKeys="[currentPage]")
+      a-menu-item(v-for="(item, index) of menuItems" :key="item.name")
+        div(class="nav_bar_menu_item")
+          a-icon(v-responsive.sm.xs style="font-size: 20px;" :type="item.icon")
+          router-link(tag="span" :to="item.url" @click.native="mapHandler(item)") {{ item.name }}
 </template>
 
 <script>
@@ -32,17 +16,39 @@ export default {
   data: function () {
     return {
       blue,
-      displayDrawer: false
+      displayDrawer: false,
+      currentPage: 'home'
     }
   },
   computed: {
     ...mapGetters('feature', {
-      currentPage: 'getCurrentPage',
       user: 'getCurrentUser'
-    })
+    }),
+    menuItems: function () {
+      if (this.user.uid) {
+        return [
+          { name: 'home', url: '/', handler: 'closeMenu', icon: 'home' },
+          { name: 'meeting', url: '/meeting', handler: 'closeMenu', icon: 'audit' },
+          { name: 'logout', url: '/logout', handler: 'handleLogout', icon: 'logout' },
+          { name: 'info', url: '/info', handler: 'closeMenu', icon: 'info-circle' }
+        ]
+      }
+      return [
+        { name: 'home', url: '/', handler: 'closeMenu', icon: 'home' },
+        { name: 'meeting', url: '/meeting', handler: 'closeMenu', icon: 'profile' },
+        { name: 'login', url: '/login', handler: 'closeMenu', icon: 'login' },
+        { name: 'register', url: '/register', handler: 'closeMenu', icon: 'user-add' },
+        { name: 'info', url: '/info', handler: 'closeMenu', icon: 'info-circle' }
+      ]
+    }
+  },
+  watch: {
+    '$route': function (to, from) {
+      this.currentPage = to.name
+    }
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentPage', 'SET_currentUser']),
+    ...mapMutations('feature', ['SET_currentUser']),
     ...mapActions('feature', ['logout']),
     handleLogout: async function (event) {
       try {
@@ -52,12 +58,25 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    mapHandler: function (item) {
+      if (this[item.handler]) {
+        this[item.handler]()
+      }
+    },
+    closeMenu: function () {
+      this.displayDrawer = false
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+  .ant-menu-item {
+    width: 64px;
+    padding: 0 12px !important;
+    box-sizing: border-box;
+  }
   #nav_bar_logo {
     display: inline-block;
     width: 32px;
@@ -68,5 +87,38 @@ export default {
     mask-repeat: no-repeat;
     mask-position: 50% 50%;
     margin: 12px 18px 12px 12px;
+  }
+  #nav_bar_root {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    background: #1890ff;
+    height: 64px;
+    box-shadow: 6px 0 12px rgba(0, 0, 0, 0.09);
+  }
+  #nav_bar_menu {
+    display: flex;
+    grid-auto-flow: column;
+    justify-content: space-between;
+    justify-items: center;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+    line-height: 64px;
+    background-color: #1890ff;
+  }
+  .nav_bar_menu_item {
+    width: 48px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 34px 12px;
+    grid-row-gap: 6px;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+    align-items: center;
+    & > i {
+      margin: 0 !important;
+    }
   }
 </style>

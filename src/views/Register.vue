@@ -40,6 +40,13 @@
                   a-tooltip(slot="suffix" title="Enter your password here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
               a-form-item(class="animated fadeIn faster delay-6")
+                a-input(placeholder="Invite code" type="password"
+                  size="large"
+                  v-decorator="['inviteCode', { rules: [{ required: true, message: 'Please input your invite code!'}] }]")
+                  a-icon(slot="prefix" type="lock")
+                  a-tooltip(slot="suffix" title="Enter your invite code here")
+                    a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
+              a-form-item(class="animated fadeIn faster delay-7")
                 a-button(size="large" style="width: 100%;" html-type="submit" type="ghost" ) Register
                 router-link(tag="a" style="color: white; float: right;" to="/login") Have an account?
 </template>
@@ -102,14 +109,14 @@ export default {
   }
   #register_logo {
     display: inline-block;
-    width: 22vw;
-    height: 22vw;
+    width: 14vw;
+    height: 14vw;
     background-color: white;
     mask-image: url("../assets/logo.svg");
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: 50% 50%;
-    margin: 8vh 4vh 4vh 4vh;
+    margin: 9vh 3vh 3vh 3vh;
   }
 
 </style>

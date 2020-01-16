@@ -1,10 +1,11 @@
 <template lang="pug">
   div(id="app")
-    nav-bar
-    vue-page-transition(name="overlay-down-full")
-      router-view(style="width: 100vw; height: calc(100vh - 96px);")
-    a-row(type="flex" justify="center" align="middle" :style="{ 'background-color': blue.primary }" style="height: 32px; color: white; font-size: 12px;")
-      p(style="margin: 0;") Copyright © 2020 f26401004 All rights reserved.
+    nav-bar(v-responsive.md.lg.xl)
+    vue-page-transition(name="overlay-right-full")
+      router-view(style="width: 100vw; height: calc(100vh - 64px);")
+    //- a-row(type="flex" justify="center" align="middle" :style="{ 'background-color': blue.primary }" style="height: 32px; color: white; font-size: 12px;")
+      //- p(style="margin: 0;") Copyright © 2020 f26401004 All rights reserved.
+    nav-bar(v-responsive.sm.xs)
 </template>
 
 <script>
@@ -74,6 +75,9 @@ export default {
   .delay-6 {
     animation-delay: 1.1s;
   }
+  .delay-7 {
+    animation-delay: 1.2s;
+  }
 
   .overlay-top, .overlay-bottom, .overlay-right, .overlay-left {
     background: url("./assets/logo-transition.svg"), #096dd9 !important;
@@ -81,5 +85,22 @@ export default {
     background-size: 18vh, cover !important;
     background-repeat: no-repeat !important;
     z-index: 999;
+  }
+  .overlay-right, .overlay-left {
+    height: calc(100vh - 64px) !important;
+  }
+
+  .ant-drawer-header {
+    background-color: #1890ff !important;
+    border-radius: 0 !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.09);
+    .ant-drawer-title {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+      color: white !important;
+    }
+    .ant-drawer-close {
+      color: white !important;
+    }
   }
 </style>
