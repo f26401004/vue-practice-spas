@@ -3,14 +3,14 @@
     div(id="home_page_background" class="decorator")
     div(id="home_page_title" class="decorator animated fadeIn delay-1")
       a-row(type="flex" justify="center" align="middle")
-        h1(style="color: white; margin-top: 24px;") Meetings
+        h1(style="color: white;") Meetings
       a-row(v-if="user.uid" type="flex" justify="center" style="color: white; font-size: 14px; text-align: center;")
         a-col(:span="24")
           span Welcome back,&nbsp;
         a-col(:span="24")
           strong
             span(style="color: white;, margin-left: 4px;") {{ user.username ? user.username : user.email }}
-      a-row(v-if="user.uid" type="flex" justify="center" align="middle" style="color: white; margin-top: 24px;")
+      a-row(v-if="user.uid" type="flex" justify="center" align="middle" style="color: white;")
         router-link(tag="span" to="/meeting")
           a-button(size="large" type="ghost" ) Check All
             a-icon(type="arrow-right")
@@ -76,9 +76,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .decorator {
-    position: absolute;
-  }
   #home_page_root {
     position: relative;
     display: grid;

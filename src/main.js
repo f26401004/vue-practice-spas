@@ -8,10 +8,12 @@ import 'ant-design-vue/dist/antd.css'
 import VueResponsive from 'vue-responsive'
 import VuePageTransition from 'vue-page-transition'
 import workbox from './registerServiceWorker'
+import VueVirtualScroller from 'vue-virtual-scroller'
 
 Vue.use(Antd)
 Vue.use(VueResponsive)
 Vue.use(VuePageTransition)
+Vue.use(VueVirtualScroller)
 // add workbox into vue instance
 Vue.prototype.$workbox = workbox
 

@@ -4,7 +4,7 @@
       a-menu-item(v-for="(item, index) of menuItems" :key="item.name")
         div(class="nav_bar_menu_item")
           a-icon(v-responsive.sm.xs style="font-size: 20px;" :type="item.icon")
-          router-link(tag="span" :to="item.url" @click.native="mapHandler(item)") {{ item.name }}
+          router-link(tag="span" :to="item.url") {{ item.name }}
 </template>
 
 <script>
@@ -27,18 +27,18 @@ export default {
     menuItems: function () {
       if (this.user.uid) {
         return [
-          { name: 'home', url: '/', handler: 'closeMenu', icon: 'home' },
-          { name: 'meeting', url: '/meeting', handler: 'closeMenu', icon: 'audit' },
-          { name: 'logout', url: '/logout', handler: 'handleLogout', icon: 'logout' },
-          { name: 'info', url: '/info', handler: 'closeMenu', icon: 'info-circle' }
+          { name: 'home', url: '/', icon: 'home' },
+          { name: 'meeting', url: '/meeting', icon: 'audit' },
+          { name: 'profile', url: '/profile', icon: 'profile' },
+          { name: 'info', url: '/info', icon: 'info-circle' }
         ]
       }
       return [
-        { name: 'home', url: '/', handler: 'closeMenu', icon: 'home' },
-        { name: 'meeting', url: '/meeting', handler: 'closeMenu', icon: 'profile' },
-        { name: 'login', url: '/login', handler: 'closeMenu', icon: 'login' },
-        { name: 'register', url: '/register', handler: 'closeMenu', icon: 'user-add' },
-        { name: 'info', url: '/info', handler: 'closeMenu', icon: 'info-circle' }
+        { name: 'home', url: '/', icon: 'home' },
+        { name: 'meeting', url: '/meeting', icon: 'profile' },
+        { name: 'login', url: '/login', icon: 'login' },
+        { name: 'register', url: '/register', icon: 'user-add' },
+        { name: 'info', url: '/info', icon: 'info-circle' }
       ]
     }
   },
@@ -58,14 +58,6 @@ export default {
       } catch (error) {
         console.log(error)
       }
-    },
-    mapHandler: function (item) {
-      if (this[item.handler]) {
-        this[item.handler]()
-      }
-    },
-    closeMenu: function () {
-      this.displayDrawer = false
     }
   }
 }
