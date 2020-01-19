@@ -1,7 +1,7 @@
 <template lang="pug">
   div(id="profile_page_root")
-    div(id="profile_page_background" class="decorator")
-    div(id="profile_picture" class="decorator")
+    div(ref="profileBackground" id="profile_page_background" class="decorator")
+    div(ref="profilePicture" id="profile_picture" class="decorator")
       img(v-cloak :src="avatar")
       a-upload(
         name="avatar"
@@ -11,34 +11,41 @@
         :showUploadList="false")
         a-button(shape="circle")
           a-icon(type="camera" theme="filled")
-    a-row(type="flex" justify="center" align="middle" style="margin-top: 18vh;")
-      h2(style="color: white; margin: 0") {{ user.username }}
-    a-row(type="flex" justify="center" align="middle" :gutter="32")
-      a-col(:span="8")
-        a-icon(style="color: white; font-size: 32px;" type="github")
-      a-col(style="color: white; font-size: 32px;" :span="8")
-        a-icon(type="facebook" theme="filled")
-      a-col(style="color: white; font-size: 32px;" :span="8")
-        a-icon(type="linkedin" theme="filled")
-    a-row(type="flex" justify="center" align="middle" id="profile_status_container")
-      p(style="text-align: center;") Display slogan here. <br> And you can at most two lines.
-      a-button(type="primary" size="large" shape="round" class="decorator" style="top: calc(100% - 20px); ") logout
-    a-row(type="flex" justify="space-between" align="middle" style="width: 100%; margin-top: 44px;")
-      label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Attendence
-      label x1
-    a-row(type="flex" justify="space-between" align="middle" style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.09);")
-      label(:style="{ 'color': blue.primary }" style="font-weight: 900; padding-bottom: 8px;") Schedule
-    a-list(itemLayout="horizontal" size="small" :dataSource="test" style="font-size: 12px; width: 100%; height: 100%; padding-right: 12px; overflow-y: auto;")
-      a-list-item(slot="renderItem" slot-scope="item, index")
-        a-list-item-meta(:description="item.description")
-          a-avatar(slot="avatar" :src="item.icon")
-          a-row(slot="title")
-            a-col(:span="12")
-              a-row(type="flex" justify="start" align="middle")
-                label {{ item.title }}
-            a-col(:span="12")
-              a-row(type="flex" justify="end" align="middle")
-                time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
+    perfect-scrollbar(style="height: calc(100%);" @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1/120 }")
+      a-row(type="flex" justify="center" align="middle" style="margin-top: 19vh;")
+        h2(style="color: white; margin: 0") {{ user.username }}
+      a-row(type="flex" justify="center" align="middle" style="margin-bottom: 18px;")
+        a-icon(style="color: white; font-size: 32px; margin-right: 24px;" type="github")
+        a-icon(style="color: white; font-size: 32px; margin-right: 24px;" type="facebook" theme="filled")
+        a-icon(style="color: white; font-size: 32px;" type="linkedin" theme="filled")
+      a-row(type="flex" justify="center" align="middle" id="profile_status_container")
+        p(style="text-align: center;") Display slogan here. <br> And you can at most two lines.
+        a-button(type="primary" size="large" shape="round" class="decorator" style="top: calc(100% - 20px); ") logout
+      a-row(style="margin-top: 0; padding: 0 12px;")
+        a-row(type="flex" justify="start" align="middle" style="width: 100%; margin-top: 44px;")
+          a-icon(type="file-done" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Attendence
+        a-row(style="margin: 0;")
+          a-progress( :percent="33" status="active" )
+        a-row(type="flex" justify="start" align="middle" style="width: 100%;")
+          a-icon(type="crown" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Activity Rate
+        a-row(style="margin: 0;")
+          a-progress( :percent="33" status="active" strokeColor="#52c41a" )
+        a-row(type="flex" justify="start" align="middle" style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.09); padding-bottom: 8px;")
+          a-icon(type="schedule" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Schedule
+        a-list(itemLayout="horizontal" size="small" :dataSource="test" style="font-size: 12px; width: 100%;")
+          a-list-item(slot="renderItem" slot-scope="item, index")
+            a-list-item-meta(:description="item.description")
+              a-avatar(slot="avatar" :src="item.icon")
+              a-row(slot="title")
+                a-col(:span="12")
+                  a-row(type="flex" justify="start" align="middle")
+                    label {{ item.title }}
+                a-col(:span="12")
+                  a-row(type="flex" justify="end" align="middle")
+                    time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
 </template>
 
 <script>
@@ -46,6 +53,7 @@ import { mapState, mapMutations } from 'vuex'
 import { blue } from '@ant-design/colors'
 import Firebase from '@/firebase'
 import axios from 'axios'
+import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
 
 export default {
   data: function () {
@@ -61,6 +69,9 @@ export default {
         icon: ''
       })
     }
+  },
+  components: {
+    PerfectScrollbar
   },
   computed: {
     ...mapState('feature', {
@@ -83,6 +94,11 @@ export default {
   },
   methods: {
     ...mapMutations('feature', ['SET_currentUserAvatar']),
+    handleScroll: function (event) {
+      const currentPosition = event.srcElement.scrollTop
+      this.$refs.profileBackground.style.transform = `skewY(-10deg) translateY(${currentPosition * (-1) - 48}px)`
+      this.$refs.profilePicture.style.transform = `translateY(${currentPosition * (-1)}px)`
+    },
     checkImageFile: function (file) {
       try {
         const isImage = file.type.indexOf('image/') === 0
@@ -117,7 +133,7 @@ export default {
     position: relative;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(5, auto) 1fr;
+    grid-template-rows: 1fr;
     grid-auto-flow: row;
     justify-content: center;
     justify-items: center;
@@ -125,6 +141,7 @@ export default {
     align-items: center;
     padding: 24px;
     box-sizing: border-box;
+    overflow: hidden;
   }
   #profile_page_background {
     top: 0;
@@ -135,6 +152,7 @@ export default {
     z-index: -1;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.09);
     transform: skewY(-10deg) translateY(-48px);
+    transition: .2s transform cubic-bezier(0.215, 0.61, 0.355, 1);
 
     &:after {
       content : "";
@@ -157,6 +175,7 @@ export default {
     height: 30vw;
     border-radius: 100%;
     background-color: gray;
+    transition: .1s transform cubic-bezier(0.215, 0.61, 0.355, 1);
     img {
       width: 100%;
       height: 100%;

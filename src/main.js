@@ -8,6 +8,7 @@ import 'ant-design-vue/dist/antd.css'
 import VueResponsive from 'vue-responsive'
 import VuePageTransition from 'vue-page-transition'
 import workbox from './registerServiceWorker'
+import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
 
 Vue.use(Antd)
 Vue.use(VueResponsive)

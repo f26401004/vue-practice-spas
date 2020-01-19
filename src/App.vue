@@ -114,4 +114,8 @@ export default {
   [v-cloak] {
     display: none;
   }
+
+  .ps__thumb-y {
+    width: 0 !important;
+  }
 </style>
