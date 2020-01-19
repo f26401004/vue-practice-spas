@@ -110,4 +110,8 @@ export default {
   .ant-row, .ant-row-flex {
     margin-top: 12px;
   }
+
+  [v-cloak] {
+    display: none;
+  }
 </style>

@@ -1,7 +1,8 @@
 import Firebase from '@/firebase.js'
 
 const state = {
-  currentUser: {}
+  currentUser: {},
+  userAvatar: ''
 }
 
 const getters = {
@@ -13,6 +14,9 @@ const getters = {
 const mutations = {
   'SET_currentUser': function (state, user) {
     state.currentUser = Object.assign({}, user)
+  },
+  'SET_currentUserAvatar': function (state, data) {
+    state.userAvatar = data
   }
 }
 
