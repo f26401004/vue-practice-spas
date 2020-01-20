@@ -26,13 +26,18 @@ export default {
   },
   beforeCreate: function () {
     // check if user have logined.
-    Firebase.auth().onAuthStateChanged(user => {
+    Firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        console.log(user)
+        // get the user information
+        const docRef = await Firebase.firestore().collection('users').doc(user.uid)
+        const response = await docRef.get()
+        const userData = response.data()
+
         this.SET_currentUser({
           uid: user.uid,
           email: user.email,
-          username: user.displayName
+          username: user.displayName,
+          ...userData
         })
       }
     })
@@ -55,6 +60,14 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
   }
 
   .decorator {
@@ -117,5 +130,8 @@ export default {
 
   .ps__thumb-y {
     width: 0 !important;
+  }
+  .ps__rail-y {
+    opacity: 0 !important;
   }
 </style>

@@ -11,31 +11,42 @@
         :showUploadList="false")
         a-button(shape="circle")
           a-icon(type="camera" theme="filled")
-    perfect-scrollbar(style="height: calc(100%);" @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1/120 }")
+    div(id="profile_info" class="decorator")
+      a-icon(
+        type="info-circle"
+        theme="filled"
+        @click="showInfo"
+        style="font-size: 24px; color: white; border-radius: 100%; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.09);")
+    perfect-scrollbar(style="width: 100%; height: calc(100%);" @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1/120 }")
       a-row(type="flex" justify="center" align="middle" style="margin-top: 19vh;")
         h2(style="color: white; margin: 0") {{ user.username }}
       a-row(type="flex" justify="center" align="middle" style="margin-bottom: 18px;")
-        a-icon(style="color: white; font-size: 32px; margin-right: 24px;" type="github")
-        a-icon(style="color: white; font-size: 32px; margin-right: 24px;" type="facebook" theme="filled")
-        a-icon(style="color: white; font-size: 32px;" type="linkedin" theme="filled")
+        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="github" v-longpress="() => openEditModal('github')")
+        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="facebook" theme="filled" v-longpress="() => openEditModal('facebook')")
+        a-icon(style="color: white; font-size: 32px; z-index: 999;" type="linkedin" theme="filled" v-longpress="() => openEditModal('linkedin')")
       a-row(type="flex" justify="center" align="middle" id="profile_status_container")
         p(style="text-align: center;") Display slogan here. <br> And you can at most two lines.
         a-button(type="primary" size="large" shape="round" class="decorator" style="top: calc(100% - 20px); ") logout
       a-row(style="margin-top: 0; padding: 0 12px;")
         a-row(type="flex" justify="start" align="middle" style="width: 100%; margin-top: 44px;")
           a-icon(type="file-done" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
-          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Attendence
+          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Attendance
         a-row(style="margin: 0;")
-          a-progress( :percent="33" status="active" )
+          a-progress( :percent="user.attendance" status="active" )
         a-row(type="flex" justify="start" align="middle" style="width: 100%;")
           a-icon(type="crown" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
           label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Activity Rate
         a-row(style="margin: 0;")
-          a-progress( :percent="33" status="active" strokeColor="#52c41a" )
+          a-progress( :percent="user.activityRate" status="active" strokeColor="#52c41a" )
+        a-row(type="flex" justify="start" align="middle" style="width: 100%;")
+          a-icon(type="read" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Knowledge
+        a-row(style="margin: 0;")
+          a-progress( :percent="user.knowledge" status="active" strokeColor="#fa8c16" )
         a-row(type="flex" justify="start" align="middle" style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.09); padding-bottom: 8px;")
           a-icon(type="schedule" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
           label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Schedule
-        a-list(itemLayout="horizontal" size="small" :dataSource="test" style="font-size: 12px; width: 100%;")
+        a-list(itemLayout="horizontal" size="small" :dataSource="user.schedules" style="width: 100%; font-size: 12px; width: 100%;")
           a-list-item(slot="renderItem" slot-scope="item, index")
             a-list-item-meta(:description="item.description")
               a-avatar(slot="avatar" :src="item.icon")
@@ -46,6 +57,7 @@
                 a-col(:span="12")
                   a-row(type="flex" justify="end" align="middle")
                     time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
+    a-modal(:title="`Update ${linkType} Link`" v-model="showEditModal", @ok="updateLink" okText="Update" cancelText="Cancel")
 </template>
 
 <script>
@@ -59,15 +71,9 @@ export default {
   data: function () {
     return {
       blue,
-      busy: false,
       loading: false,
-      test: new Array(3).fill({
-        title: 'Vue practice!!',
-        description: 'Practice vue framework and build a calendar APP for yourself!!',
-        date: new Date(),
-        join: false,
-        icon: ''
-      })
+      linkType: '',
+      showEditModal: false
     }
   },
   components: {
@@ -123,6 +129,20 @@ export default {
         this.loading = false
       } catch (error) {
       }
+    },
+    showInfo: function () {
+      console.log('test')
+      this.$info({
+        width: 'calc(100vw - 48px)',
+        title: 'Profile Page',
+        content: 'You can longpress on the link icons to edit the link address.'
+      })
+    },
+    openEditModal: function (type) {
+      this.linkType = type
+      this.showEditModal = true
+    },
+    updateLink: function () {
     }
   }
 }
@@ -142,6 +162,11 @@ export default {
     padding: 24px;
     box-sizing: border-box;
     overflow: hidden;
+  }
+  #profile_info {
+    top: 24px;
+    right: 24px;
+    z-index: 999;
   }
   #profile_page_background {
     top: 0;

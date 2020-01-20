@@ -9,6 +9,8 @@ import VueResponsive from 'vue-responsive'
 import VuePageTransition from 'vue-page-transition'
 import workbox from './registerServiceWorker'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+import '@/directives/longpress.js'
+import FastClick from 'fastclick'
 
 Vue.use(Antd)
 Vue.use(VueResponsive)
@@ -23,3 +25,5 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+FastClick.attach(document.body)
