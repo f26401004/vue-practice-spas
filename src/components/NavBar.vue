@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import { blue } from '@ant-design/colors'
 
 export default {
@@ -21,8 +21,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('feature', {
-      user: 'getCurrentUser'
+    ...mapState('user', {
+      user: 'currentUser'
     }),
     menuItems: function () {
       if (this.user.uid) {
@@ -48,8 +48,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentUser']),
-    ...mapActions('feature', ['logout']),
+    ...mapMutations('user', ['SET_currentUser']),
+    ...mapActions('user', ['logout']),
     handleLogout: async function (event) {
       try {
         await this.logout()

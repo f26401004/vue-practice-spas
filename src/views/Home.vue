@@ -54,7 +54,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('feature', {
+    ...mapGetters('user', {
       user: 'getCurrentUser'
     })
   },
@@ -70,7 +70,7 @@ export default {
     // }, 1000)
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentUser'])
+    ...mapMutations('user', ['SET_currentUser'])
   }
 }
 </script>

@@ -30,6 +30,7 @@ Vue.directive('longpress', {
       if (pressTimer !== null) {
         clearTimeout(pressTimer)
         pressTimer = null
+        console.log(pressTimer)
       }
     }
     // handler to execute the function
@@ -39,12 +40,10 @@ Vue.directive('longpress', {
     }
 
     // add event listener
-    el.addEventListener('moudedown', start)
-    el.addEventListener('touchstart', start)
+    const startEvent = ['mousedown', 'touchstart']
+    startEvent.forEach(e => el.addEventListener(e, start))
     // cancel timeout
-    el.addEventListener('click', cancel)
-    el.addEventListener('mouseout', cancel)
-    el.addEventListener('touchend', cancel)
-    el.addEventListener('touchcancel', cancel)
+    const cancelEvent = ['click', 'mouseout', 'touchend', 'touchcancel']
+    cancelEvent.forEach(e => el.addEventListener(e, cancel))
   }
 })

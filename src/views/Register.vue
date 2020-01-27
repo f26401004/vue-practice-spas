@@ -8,7 +8,6 @@
     a-row(type="flex" justify="center" align="middle")
       a-col(:xs="20" :md="14" :lg="6")
         div(style="padding: 24px; box-sizing: border-box;")
-          a-alert(v-if="errorMessage" type="error" :message="errorMessage" banner)
           a-row(style="margin-top: 12px;")
             a-form(layout="horizontal" :form="form" @submit.prevent="handleSubmit")
               a-form-item(class="animated fadeIn faster delay-2")
@@ -47,7 +46,7 @@
                   a-tooltip(slot="suffix" title="Enter your invite code here")
                     a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45)")
               a-form-item(class="animated fadeIn faster delay-7")
-                a-button(size="large" style="width: 100%;" html-type="submit" type="ghost" ) Register
+                a-button(size="large" style="width: 100%;" html-type="submit" type="ghost" :loading="submitButtonLoading") Register
                 router-link(tag="a" style="color: white; float: right;" to="/login") Have an account?
 </template>
 
@@ -60,27 +59,29 @@ export default {
   data: function () {
     return {
       grey,
-      errorMessage: ''
+      submitButtonLoading: false
     }
   },
   beforeCreate: function () {
     this.form = this.$form.createForm(this, { name: 'normal_register' })
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentUser']),
-    ...mapActions('feature', ['register']),
+    ...mapMutations('user', ['SET_currentUser']),
+    ...mapActions('user', ['register']),
     handleSubmit: async function (event) {
       this.form.validateFields(async (error, values) => {
         if (!error) {
           try {
+            this.submitButtonLoading = true
             this.register(values)
             this.$router.replace('/meeting')
+            this.submitButtonLoading = false
           } catch (error) {
-            this.errorMessage = error.message
+            this.$message.error(error.message)
           }
           return
         }
-        this.errorMessage = error.message
+        this.$message.error(error.message)
       })
     },
     emailValidator: function (rule, value, callback) {

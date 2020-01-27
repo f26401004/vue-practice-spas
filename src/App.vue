@@ -6,12 +6,13 @@
     //- a-row(type="flex" justify="center" align="middle" :style="{ 'background-color': blue.primary }" style="height: 32px; color: white; font-size: 12px;")
       //- p(style="margin: 0;") Copyright © 2020 f26401004 All rights reserved.
     nav-bar(v-responsive.sm.xs)
+    div(class="loading-overlay" :class="{ 'loading-overlay-active': this.loading }")
 </template>
 
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Firebase from '@/firebase.js'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import { blue } from '@ant-design/colors'
 
 export default {
@@ -23,6 +24,11 @@ export default {
     return {
       blue
     }
+  },
+  computed: {
+    ...mapGetters('feature', {
+      loading: 'getLoading'
+    })
   },
   beforeCreate: function () {
     // check if user have logined.
@@ -43,7 +49,7 @@ export default {
     })
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentUser'])
+    ...mapMutations('user', ['SET_currentUser'])
   }
 }
 </script>
@@ -133,5 +139,36 @@ export default {
   }
   .ps__rail-y {
     opacity: 0 !important;
+  }
+  .ant-modal-wrap {
+    display: flex !important;
+    align-content: center !important;
+    align-items: center !important;
+    pointer-events: none;
+  }
+  .ant-modal-mask {
+    pointer-events: none;
+  }
+  .ant-modal {
+    pointer-events: all;
+  }
+  .custom-modal-style {
+    width: calc(100vw - 48px) !important;
+    max-height: calc(100vh - 48px) !important;
+    top: 0 !important;
+  }
+
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    pointer-events: none;
+    transition: .2s background-color cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  .loading-overlay-active {
+    background-color: rgba(0, 0, 0, 0.18);
   }
 </style>

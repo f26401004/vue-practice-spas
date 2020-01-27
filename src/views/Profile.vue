@@ -2,7 +2,7 @@
   div(id="profile_page_root")
     div(ref="profileBackground" id="profile_page_background" class="decorator")
     div(ref="profilePicture" id="profile_picture" class="decorator")
-      img(v-cloak :src="avatar")
+      img(v-show="avatar" :src="avatar")
       a-upload(
         name="avatar"
         :multiple="false"
@@ -16,17 +16,17 @@
         type="info-circle"
         theme="filled"
         @click="showInfo"
-        style="font-size: 24px; color: white; border-radius: 100%; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.09);")
-    perfect-scrollbar(style="width: 100%; height: calc(100%);" @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1/120 }")
-      a-row(type="flex" justify="center" align="middle" style="margin-top: 19vh;")
+        style="display: block; font-size: 24px; color: white; border-radius: 100%; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.09);")
+    perfect-scrollbar(style="width: 100%; height: calc(100%);padding: 0 24px; " @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1 }")
+      a-row(type="flex" justify="center" align="middle" style="margin-top: 24vh;")
         h2(style="color: white; margin: 0") {{ user.username }}
       a-row(type="flex" justify="center" align="middle" style="margin-bottom: 18px;")
-        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="github" v-longpress="() => openEditModal('github')")
-        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="facebook" theme="filled" v-longpress="() => openEditModal('facebook')")
-        a-icon(style="color: white; font-size: 32px; z-index: 999;" type="linkedin" theme="filled" v-longpress="() => openEditModal('linkedin')")
+        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="github" v-longpress="() => openEditModal('Github')")
+        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="facebook" theme="filled" v-longpress="() => openEditModal('Facebook')")
+        a-icon(style="color: white; font-size: 32px; z-index: 999;" type="linkedin" theme="filled" v-longpress="() => openEditModal('Linkedin')")
       a-row(type="flex" justify="center" align="middle" id="profile_status_container")
-        p(style="text-align: center;") Display slogan here. <br> And you can at most two lines.
-        a-button(type="primary" size="large" shape="round" class="decorator" style="top: calc(100% - 20px); ") logout
+        pre(style="text-align: center; max-height: 48px; overflow-y: auto" v-html="user.status")
+        a-button(type="primary" shape="round" size="large" icon="edit" @click="openStatusEditModal" class="decorator" style="top: calc(100% - 20px);") Edit
       a-row(style="margin-top: 0; padding: 0 12px;")
         a-row(type="flex" justify="start" align="middle" style="width: 100%; margin-top: 44px;")
           a-icon(type="file-done" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
@@ -57,7 +57,30 @@
                 a-col(:span="12")
                   a-row(type="flex" justify="end" align="middle")
                     time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
-    a-modal(:title="`Update ${linkType} Link`" v-model="showEditModal", @ok="updateLink" okText="Update" cancelText="Cancel")
+    a-modal(class="custom-modal-style"
+      v-model="showLinkEditModal"
+      @ok="updateLink"
+      okText="Update"
+      cancelText="Cancel"
+      :okButtonProps="{ props: { loading: updateLinkButtonLoading } }")
+      div(slot="title")
+        a-icon(:type="linkType.toLowerCase()" theme="filled" style="font-size: 18px; margin-right: 12px;")
+        h3(style="display: inline-block; margin: 0;") Update {{linkType}} Link
+      a-input(size="large" :placeholder="`${linkType} address`" v-model="newAddress")
+        a-tooltip(slot="suffix" :title="`Please enter new ${linkType} address`")
+          a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
+    a-modal(class="custom-modal-style"
+      v-model="showStatusEditModal"
+      @ok="updateStatus"
+      okText="Update"
+      cancelText="Cancel"
+      :okButtonProps="{ props: { loading: updateStatusButtonLoading } }")
+      div(slot="title")
+        a-icon(type="form" theme="filled" style="font-size: 18px; margin-right: 12px;")
+        h3(style="display: inline-block; margin: 0;") Update Your Status
+      a-textarea(size="large" placeholder="Status" v-model="newStatus" :row="2")
+        a-tooltip(slot="suffix" :title="`Please enter new status`")
+          a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
 </template>
 
 <script>
@@ -73,14 +96,19 @@ export default {
       blue,
       loading: false,
       linkType: '',
-      showEditModal: false
+      newAddress: '',
+      newStatus: '',
+      updateLinkButtonLoading: false,
+      updateStatusButtonLoading: false,
+      showLinkEditModal: false,
+      showStatusEditModal: false
     }
   },
   components: {
     PerfectScrollbar
   },
   computed: {
-    ...mapState('feature', {
+    ...mapState('user', {
       user: 'currentUser',
       avatar: 'userAvatar'
     })
@@ -99,7 +127,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentUserAvatar']),
+    ...mapMutations('user', ['SET_currentUserAvatar', 'UPDATE_currentUser']),
     handleScroll: function (event) {
       const currentPosition = event.srcElement.scrollTop
       this.$refs.profileBackground.style.transform = `skewY(-10deg) translateY(${currentPosition * (-1) - 48}px)`
@@ -133,16 +161,69 @@ export default {
     showInfo: function () {
       console.log('test')
       this.$info({
-        width: 'calc(100vw - 48px)',
+        class: 'custom-modal-style',
+        okType: 'ghost',
         title: 'Profile Page',
-        content: 'You can longpress on the link icons to edit the link address.'
+        content: h => (<div>
+          <ul style="margin: 0; padding-left: 24px;">
+            <li>Obtain <b>Attendance</b> point by join the study group meetings.</li>
+            <li>Increase <b>Activity Rate</b> by posting coding problem and playing QUICK ANSWER GAME.</li>
+            <li>Increase <b>Knowledge</b> point by playing QUICK ANSWER GAME.</li>
+          </ul>
+          <br/>
+          <p><b>Tips:</b> You can <b>click on</b> the camera icon near your avatar to upload your avatar.</p>
+          <p><b>Tips:</b> You can <b>longpress</b> the link icons to edit the link address.</p>
+          <p><b>Tips:</b> You can <b>longpress</b> the status container to edit the status disaplyed when you are not in meeting.</p>
+        </div>)
       })
     },
     openEditModal: function (type) {
       this.linkType = type
-      this.showEditModal = true
+      this.showLinkEditModal = true
+      this.newAddress = this.user[`${this.linkType.toLowerCase()}Link`]
     },
-    updateLink: function () {
+    openStatusEditModal: function () {
+      this.showStatusEditModal = true
+      this.newStatus = this.user.status || 'Display slogan here. \nAnd you can at most two lines.'
+    },
+    updateLink: async function () {
+      if (this.newAddress.length === 0) {
+        this.$message.error(`New ${this.linkType} link address can not be empty!`)
+        this.showLinkEditModal = false
+        return
+      }
+      try {
+        this.updateLinkButtonLoading = true
+        const data = {}
+        data[`${this.linkType.toLowerCase()}Link`] = this.newAddress
+        const docRef = await Firebase.firestore().collection('users').doc(this.user.uid)
+        await docRef.update(data)
+        // update the local data
+        this.UPDATE_currentUser(data)
+        this.updateLinkButtonLoading = false
+        this.showLinkEditModal = false
+      } catch (error) {
+        // display the error message to user
+        this.$message.error(error.message)
+      }
+    },
+    updateStatus: async function () {
+      if (this.newStatus.length === 0) {
+        this.$message.error('New status can not be empty')
+        this.showStatusEditModal = false
+        return
+      }
+      try {
+        this.updateStatusButtonLoading = true
+        const data = { status: this.newStatus }
+        const docRef = await Firebase.firestore().collection('users').doc(this.user.uid)
+        await docRef.update(data)
+        this.UPDATE_currentUser(data)
+        this.updateStatusButtonLoading = false
+        this.showStatusEditModal = false
+      } catch (error) {
+        this.$message.error(error.message)
+      }
     }
   }
 }
@@ -159,8 +240,6 @@ export default {
     justify-items: center;
     align-content: flex-start;
     align-items: center;
-    padding: 24px;
-    box-sizing: border-box;
     overflow: hidden;
   }
   #profile_info {

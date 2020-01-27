@@ -10,7 +10,6 @@
     a-row(type="flex" justify="center" align="middle")
       a-col(:xs="20" :md="14" :lg="6")
         div(style="padding: 24px;")
-          a-alert(v-if="errorMessage" type="error" :message="errorMessage" banner)
           a-row(style="margin-top: 12px;")
             a-form(layout="horizontal" :form="form" @submit.prevent="handleSubmit")
               a-form-item(class="animated fadeIn faster delay-3")
@@ -30,7 +29,7 @@
               a-form-item(class="animated fadeIn faster delay-4")
                 a-checkbox(v-decorator="['remember', { valuePropName: 'checked', initialValue: true }]") Remember me
                 a(style="float: right;") Forgot password
-                a-button(size="large" type="primary" style="width: 100%;" html-type="submit" class="ripple") Login
+                a-button(size="large" type="primary" style="width: 100%;" html-type="submit" class="ripple" :loading="submitButtonLoading") Login
                 span or
                 router-link(tag="a" to="/register") &nbsp;register now!
 </template>
@@ -45,27 +44,29 @@ export default {
     return {
       blue,
       grey,
-      errorMessage: null
+      submitButtonLoading: false
     }
   },
   beforeCreate: function () {
     this.form = this.$form.createForm(this, { name: 'normal_login' })
   },
   methods: {
-    ...mapMutations('feature', ['SET_currentUser']),
-    ...mapActions('feature', ['login']),
+    ...mapMutations('user', ['SET_currentUser']),
+    ...mapActions('user', ['login']),
     handleSubmit: async function (event) {
       this.form.validateFields(async (error, values) => {
         if (!error) {
           try {
+            this.submitButtonLoading = true
             await this.login(values)
             this.$router.push('/meeting')
+            this.submitButtonLoading = false
           } catch (error) {
-            this.errorMessage = error.message
+            this.$message.error(error.message)
           }
           return
         }
-        this.errorMessage = error.message
+        this.$message.error(error.message)
       })
     },
     emailValidator: function (rule, value, callback) {
