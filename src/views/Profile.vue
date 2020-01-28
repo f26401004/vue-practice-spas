@@ -1,86 +1,87 @@
 <template lang="pug">
-  div(id="profile_page_root")
-    div(ref="profileBackground" id="profile_page_background" class="decorator")
-    div(ref="profilePicture" id="profile_picture" class="decorator")
-      img(v-show="avatar" :src="avatar")
-      a-upload(
-        name="avatar"
-        :multiple="false"
-        :action="uploadImage"
-        @beforeUpload="checkImageFile"
-        :showUploadList="false")
-        a-button(shape="circle")
-          a-icon(type="camera" theme="filled")
-    div(id="profile_info" class="decorator")
-      a-icon(
-        type="info-circle"
-        theme="filled"
-        @click="showInfo"
-        style="display: block; font-size: 24px; color: white; border-radius: 100%; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.09);")
-    perfect-scrollbar(style="width: 100%; height: calc(100%);padding: 0 24px; " @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1 }")
-      a-row(type="flex" justify="center" align="middle" style="margin-top: 24vh;")
-        h2(style="color: white; margin: 0") {{ user.username }}
-      a-row(type="flex" justify="center" align="middle" style="margin-bottom: 18px;")
-        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="github" v-longpress="() => openEditModal('Github')")
-        a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="facebook" theme="filled" v-longpress="() => openEditModal('Facebook')")
-        a-icon(style="color: white; font-size: 32px; z-index: 999;" type="linkedin" theme="filled" v-longpress="() => openEditModal('Linkedin')")
-      a-row(type="flex" justify="center" align="middle" id="profile_status_container")
-        pre(style="text-align: center; max-height: 48px; overflow-y: auto" v-html="user.status")
-        a-button(type="primary" shape="round" size="large" icon="edit" @click="openStatusEditModal" class="decorator" style="top: calc(100% - 20px);") Edit
-      a-row(style="margin-top: 0; padding: 0 12px;")
-        a-row(type="flex" justify="start" align="middle" style="width: 100%; margin-top: 44px;")
-          a-icon(type="file-done" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
-          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Attendance
-        a-row(style="margin: 0;")
-          a-progress( :percent="user.attendance" status="active" )
-        a-row(type="flex" justify="start" align="middle" style="width: 100%;")
-          a-icon(type="crown" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
-          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Activity Rate
-        a-row(style="margin: 0;")
-          a-progress( :percent="user.activityRate" status="active" strokeColor="#52c41a" )
-        a-row(type="flex" justify="start" align="middle" style="width: 100%;")
-          a-icon(type="read" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
-          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Knowledge
-        a-row(style="margin: 0;")
-          a-progress( :percent="user.knowledge" status="active" strokeColor="#fa8c16" )
-        a-row(type="flex" justify="start" align="middle" style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.09); padding-bottom: 8px;")
-          a-icon(type="schedule" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
-          label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Schedule
-        a-list(itemLayout="horizontal" size="small" :dataSource="user.schedules" style="width: 100%; font-size: 12px; width: 100%;")
-          a-list-item(slot="renderItem" slot-scope="item, index")
-            a-list-item-meta(:description="item.description")
-              a-avatar(slot="avatar" :src="item.icon")
-              a-row(slot="title")
-                a-col(:span="12")
-                  a-row(type="flex" justify="start" align="middle")
-                    label {{ item.title }}
-                a-col(:span="12")
-                  a-row(type="flex" justify="end" align="middle")
-                    time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
-    a-modal(class="custom-modal-style"
-      v-model="showLinkEditModal"
-      @ok="updateLink"
-      okText="Update"
-      cancelText="Cancel"
-      :okButtonProps="{ props: { loading: updateLinkButtonLoading } }")
-      div(slot="title")
-        a-icon(:type="linkType.toLowerCase()" theme="filled" style="font-size: 18px; margin-right: 12px;")
-        h3(style="display: inline-block; margin: 0;") Update {{linkType}} Link
-      a-input(size="large" :placeholder="`${linkType} address`" v-model="newAddress")
-        a-tooltip(slot="suffix" :title="`Please enter new ${linkType} address`")
-          a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
-    a-modal(class="custom-modal-style"
-      v-model="showStatusEditModal"
-      @ok="updateStatus"
-      okText="Update"
-      cancelText="Cancel"
-      :okButtonProps="{ props: { loading: updateStatusButtonLoading } }")
-      div(slot="title")
-        a-icon(type="form" theme="filled" style="font-size: 18px; margin-right: 12px;")
-        h3(style="display: inline-block; margin: 0;") Update Your Status
-      a-textarea(size="large" placeholder="Status" v-model="newStatus" :row="2")
-        a-tooltip(slot="suffix" :title="`Please enter new status`")
-          a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
+  a-spin(:spinning="loading")
+    div(id="profile_page_root")
+      div(ref="profileBackground" id="profile_page_background" class="decorator")
+      div(ref="profilePicture" id="profile_picture" class="decorator")
+        img(v-show="avatar" :src="avatar")
+        a-upload(
+          name="avatar"
+          :multiple="false"
+          :action="uploadImage"
+          @beforeUpload="checkImageFile"
+          :showUploadList="false")
+          a-button(shape="circle")
+            a-icon(type="camera" theme="filled")
+      div(id="profile_info" class="decorator")
+        a-icon(
+          type="info-circle"
+          theme="filled"
+          @click="showInfo"
+          style="display: block; font-size: 24px; color: white; border-radius: 100%; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.09);")
+      perfect-scrollbar(style="width: 100%; height: calc(100%);padding: 0 24px; " @ps-scroll-y="handleScroll" :options="{ swipeEasing: true, wheelSpeed: 1 }")
+        a-row(type="flex" justify="center" align="middle" style="margin-top: 24vh;")
+          h2(style="color: white; margin: 0") {{ user.username }}
+        a-row(type="flex" justify="center" align="middle" style="margin-bottom: 18px;")
+          a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="github" v-longpress="() => openEditModal('Github')")
+          a-icon(style="color: white; font-size: 32px; margin-right: 32px; z-index: 999;" type="facebook" theme="filled" v-longpress="() => openEditModal('Facebook')")
+          a-icon(style="color: white; font-size: 32px; z-index: 999;" type="linkedin" theme="filled" v-longpress="() => openEditModal('Linkedin')")
+        a-row(type="flex" justify="center" align="middle" id="profile_status_container")
+          pre(style="text-align: center; max-height: 48px; overflow-y: hidden" v-cloak v-html="user.status.slice(0, 50)")
+          a-button(v-if="isCurrentUser" type="primary" shape="round" size="large" icon="edit" @click="openStatusEditModal" class="decorator" style="top: calc(100% - 20px);") Edit
+        a-row(style="margin-top: 0; padding: 0 12px;")
+          a-row(type="flex" justify="start" align="middle" style="width: 100%; margin-top: 44px;")
+            a-icon(type="file-done" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+            label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Attendance
+          a-row(style="margin: 0;")
+            a-progress( :percent="user.attendance" status="active" )
+          a-row(type="flex" justify="start" align="middle" style="width: 100%;")
+            a-icon(type="crown" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+            label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Activity Rate
+          a-row(style="margin: 0;")
+            a-progress( :percent="user.activityRate" status="active" strokeColor="#52c41a" )
+          a-row(type="flex" justify="start" align="middle" style="width: 100%;")
+            a-icon(type="read" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+            label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Knowledge
+          a-row(style="margin: 0;")
+            a-progress( :percent="user.knowledge" status="active" strokeColor="#fa8c16" )
+          a-row(type="flex" justify="start" align="middle" style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.09); padding-bottom: 8px;")
+            a-icon(type="schedule" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
+            label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Schedule
+          a-list(itemLayout="horizontal" size="small" :dataSource="user.schedules" style="width: 100%; font-size: 12px; width: 100%;")
+            a-list-item(slot="renderItem" slot-scope="item, index")
+              a-list-item-meta(:description="item.description")
+                a-avatar(slot="avatar" :src="item.icon")
+                a-row(slot="title")
+                  a-col(:span="12")
+                    a-row(type="flex" justify="start" align="middle")
+                      label {{ item.title }}
+                  a-col(:span="12")
+                    a-row(type="flex" justify="end" align="middle")
+                      time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
+      a-modal(class="custom-modal-style"
+        v-model="showLinkEditModal"
+        @ok="updateLink"
+        okText="Update"
+        cancelText="Cancel"
+        :okButtonProps="{ props: { loading: updateLinkButtonLoading } }")
+        div(slot="title")
+          a-icon(:type="linkType.toLowerCase()" theme="filled" style="font-size: 18px; margin-right: 12px;")
+          h3(style="display: inline-block; margin: 0;") Update {{linkType}} Link
+        a-input(size="large" :placeholder="`${linkType} address`" v-model="newAddress")
+          a-tooltip(slot="suffix" :title="`Please enter new ${linkType} address`")
+            a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
+      a-modal(class="custom-modal-style"
+        v-model="showStatusEditModal"
+        @ok="updateStatus"
+        okText="Update"
+        cancelText="Cancel"
+        :okButtonProps="{ props: { loading: updateStatusButtonLoading } }")
+        div(slot="title")
+          a-icon(type="form" theme="filled" style="font-size: 18px; margin-right: 12px;")
+          h3(style="display: inline-block; margin: 0;") Update Your Status (Max Length: 50)
+        a-textarea(size="large" placeholder="Status" v-model="newStatus" :row="2")
+          a-tooltip(slot="suffix" :title="`Please enter new status`")
+            a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
 </template>
 
 <script>
@@ -94,7 +95,16 @@ export default {
   data: function () {
     return {
       blue,
-      loading: false,
+      user: {
+        uid: '',
+        username: 'unknown',
+        status: 'unknown',
+        attendance: 0,
+        activityRate: 0,
+        knowledge: 0,
+        schedules: []
+      },
+      avatar: '',
       linkType: '',
       newAddress: '',
       newStatus: '',
@@ -109,25 +119,50 @@ export default {
   },
   computed: {
     ...mapState('user', {
-      user: 'currentUser',
-      avatar: 'userAvatar'
-    })
+      currentUser: 'currentUser',
+      currentUserAvatar: 'userAvatar'
+    }),
+    ...mapState('feature', {
+      loading: 'loading'
+    }),
+    isCurrentUser: function () {
+      if (this.$route.params.uid) {
+        return this.$route.params.uid === this.currentUser.uid
+      }
+      return this.currentUser.uid !== undefined
+    }
   },
   beforeMount: async function () {
-    if (this.avatar) {
+    if (!this.$route.params.uid) {
+      this.user = this.currentUser
+      this.avatar = this.currentUserAvatar
       return
     }
+    // retrieve the other user's data
+    let responseAvatar
+    let responseUser
+    // display the loading effect
+    this.SET_loading(true)
     try {
       const storageRef = Firebase.storage().ref()
-      const url = await storageRef.child(`images/avatar/${this.user.uid}`).getDownloadURL()
-      const response = await axios.get(url, { responseType: 'blob' })
-      this.SET_currentUserAvatar(window.URL.createObjectURL(response.data))
+      const url = await storageRef.child(`images/avatar/${this.$route.params.uid}`).getDownloadURL()
+      responseAvatar = await axios.get(url, { responseType: 'blob' })
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
+    }
+    try {
+      const docRef = await Firebase.firestore().collection('users').doc(this.$route.params.uid)
+      responseUser = await docRef.get()
+      this.user = responseUser.data()
+      this.avatar = responseAvatar ? window.URL.createObjectURL(responseAvatar.data) : null
+      this.SET_loading(false)
+    } catch (error) {
+      console.log(error.message)
     }
   },
   methods: {
     ...mapMutations('user', ['SET_currentUserAvatar', 'UPDATE_currentUser']),
+    ...mapMutations('feature', ['SET_loading']),
     handleScroll: function (event) {
       const currentPosition = event.srcElement.scrollTop
       this.$refs.profileBackground.style.transform = `skewY(-10deg) translateY(${currentPosition * (-1) - 48}px)`
@@ -159,7 +194,22 @@ export default {
       }
     },
     showInfo: function () {
-      console.log('test')
+      if (!this.isCurrentUser) {
+        this.$info({
+          class: 'custom-modal-style',
+          okType: 'ghost',
+          title: 'Profile Page',
+          content: h => (<div>
+            <ul style="margin: 0; padding-left: 24px;">
+              <li>Obtain <b>Attendance</b> point by join the study group meetings.</li>
+              <li>Increase <b>Activity Rate</b> by posting coding problem and playing QUICK ANSWER GAME.</li>
+              <li>Increase <b>Knowledge</b> point by playing QUICK ANSWER GAME.</li>
+            </ul>
+            <br/>
+          </div>)
+        })
+        return
+      }
       this.$info({
         class: 'custom-modal-style',
         okType: 'ghost',
@@ -173,11 +223,15 @@ export default {
           <br/>
           <p><b>Tips:</b> You can <b>click on</b> the camera icon near your avatar to upload your avatar.</p>
           <p><b>Tips:</b> You can <b>longpress</b> the link icons to edit the link address.</p>
-          <p><b>Tips:</b> You can <b>longpress</b> the status container to edit the status disaplyed when you are not in meeting.</p>
+          <p><b>Tips:</b> You can <b>click on</b> the edit button to edit the status disaplyed when you are not in study group meeting.</p>
         </div>)
       })
     },
     openEditModal: function (type) {
+      if (!this.currentUser.uid || this.$route.params.uid !== this.currentUser.uid) {
+        window.open(this.user[`${type.toLowerCase()}Link`], '_blank')
+        return
+      }
       this.linkType = type
       this.showLinkEditModal = true
       this.newAddress = this.user[`${this.linkType.toLowerCase()}Link`]
@@ -209,7 +263,12 @@ export default {
     },
     updateStatus: async function () {
       if (this.newStatus.length === 0) {
-        this.$message.error('New status can not be empty')
+        this.$message.error('New status can not be empty!')
+        this.showStatusEditModal = false
+        return
+      }
+      if (this.newStatus.length > 50) {
+        this.$message.error('New status must within 50 length!')
         this.showStatusEditModal = false
         return
       }
@@ -241,6 +300,10 @@ export default {
     align-content: flex-start;
     align-items: center;
     overflow: hidden;
+
+    width: 100%;
+    height: 100%;
+    overflow: auto;
   }
   #profile_info {
     top: 24px;

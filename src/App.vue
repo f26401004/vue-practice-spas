@@ -3,10 +3,7 @@
     nav-bar(v-responsive.md.lg.xl)
     vue-page-transition(name="overlay-right-full")
       router-view(style="height: calc(100vh - 64px);")
-    //- a-row(type="flex" justify="center" align="middle" :style="{ 'background-color': blue.primary }" style="height: 32px; color: white; font-size: 12px;")
-      //- p(style="margin: 0;") Copyright © 2020 f26401004 All rights reserved.
     nav-bar(v-responsive.sm.xs)
-    div(class="loading-overlay" :class="{ 'loading-overlay-active': this.loading }")
 </template>
 
 <script>
@@ -14,6 +11,7 @@ import NavBar from '@/components/NavBar.vue'
 import Firebase from '@/firebase.js'
 import { mapMutations, mapGetters } from 'vuex'
 import { blue } from '@ant-design/colors'
+import axios from 'axios'
 
 export default {
   name: 'app',
@@ -36,8 +34,8 @@ export default {
       if (user) {
         // get the user information
         const docRef = await Firebase.firestore().collection('users').doc(user.uid)
-        const response = await docRef.get()
-        const userData = response.data()
+        const responseUser = await docRef.get()
+        const userData = responseUser.data()
 
         this.SET_currentUser({
           uid: user.uid,
@@ -45,11 +43,21 @@ export default {
           username: user.displayName,
           ...userData
         })
+
+        // get user avatar
+        try {
+          const storageRef = Firebase.storage().ref()
+          const url = await storageRef.child(`images/avatar/${user.uid}`).getDownloadURL()
+          const responseAvatar = await axios.get(url, { responseType: 'blob' })
+          this.SET_currentUsrAvatar(window.URL.createObjectURL(responseAvatar.data))
+        } catch (error) {
+          console.log(error)
+        }
       }
     })
   },
   methods: {
-    ...mapMutations('user', ['SET_currentUser'])
+    ...mapMutations('user', ['SET_currentUser', 'SET_currentUserAvatar'])
   }
 }
 </script>
@@ -157,18 +165,30 @@ export default {
     max-height: calc(100vh - 48px) !important;
     top: 0 !important;
   }
-
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: transparent;
+  .spin-content {
+    border: 1px solid #91d5ff;
+    background-color: #e6f7ff;
+    padding: 30px;
     pointer-events: none;
-    transition: .2s background-color cubic-bezier(0.215, 0.61, 0.355, 1);
   }
-  .loading-overlay-active {
-    background-color: rgba(0, 0, 0, 0.18);
+  .ant-spin-container {
+    height: 100%;
+  }
+  .ant-tabs-content {
+    position: relative;
+    height: calc(100% - 84px);
+    overflow-y: auto;
+  }
+  .ant-tabs-nav-container {
+    padding-top: 24px;
+    box-sizing: border-box;
+    background: #1890ff;
+    color: white;
+  }
+  .ant-tabs-tab-active {
+    color: white !important;
+    font-weight: 900;
+    background: rgba(255, 255, 255, 0.33);
+    border-radius: 8px 8px 0 0;
   }
 </style>

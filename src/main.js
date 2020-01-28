@@ -7,7 +7,7 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import VueResponsive from 'vue-responsive'
 import VuePageTransition from 'vue-page-transition'
-import workbox from './registerServiceWorker'
+// import workbox from './registerServiceWorker'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
 import '@/directives/longpress.js'
 import FastClick from 'fastclick'
@@ -16,7 +16,7 @@ Vue.use(Antd)
 Vue.use(VueResponsive)
 Vue.use(VuePageTransition)
 // add workbox into vue instance
-Vue.prototype.$workbox = workbox
+// Vue.prototype.$workbox = workbox
 
 Vue.config.productionTip = false
 

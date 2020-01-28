@@ -6,7 +6,9 @@ const state = {
 }
 
 const getters = {
-  getCurrentUser: state => state.currentUser
+  getCurrentUser: state => state.currentUser,
+  getCurrentUserUID: state => state.currentUser.uid,
+  getCurrentUserAvatar: state => state.userAvatar
 }
 
 const mutations = {
@@ -54,7 +56,8 @@ const actions = {
       githubLink: '',
       facebookLink: '',
       linkedinLink: '',
-      status: ''
+      status: '',
+      username: username
     })
     // set the local user data directly
     commit('SET_currentUser', {
