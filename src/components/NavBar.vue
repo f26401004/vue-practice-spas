@@ -1,7 +1,7 @@
 <template lang="pug">
   div(id="nav_bar_root")
-    a-menu(id="nav_bar_menu" theme="dark" mode="horizontal" :selectedKeys="[currentPage]")
-      a-menu-item(v-for="(item, index) of menuItems" :key="item.name")
+    a-menu(id="nav_bar_menu" mode="horizontal" :selectedKeys="[currentPage]" :inlineIndent="12")
+      a-menu-item(v-for="(item, index) of menuItems" :key="item.name" class="ripple")
         div(class="nav_bar_menu_item")
           a-icon(v-responsive.sm.xs style="font-size: 20px;" :type="item.icon")
           router-link(tag="span" :to="item.url") {{ item.name }}
@@ -64,11 +64,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .ant-menu-item {
-    width: 64px;
-    padding: 0 12px !important;
-    box-sizing: border-box;
-  }
   #nav_bar_logo {
     display: inline-block;
     width: 32px;
@@ -84,7 +79,6 @@ export default {
     display: flex;
     align-content: center;
     align-items: center;
-    background: #1890ff;
     height: 64px;
     box-shadow: 6px 0 12px rgba(0, 0, 0, 0.09);
   }
@@ -96,14 +90,16 @@ export default {
     align-content: center;
     align-items: center;
     width: 100%;
-    line-height: 64px;
-    background-color: #1890ff;
+    height: 100%;
+    line-height: 100%;
+    border-bottom: none !important;
   }
   .nav_bar_menu_item {
     width: 48px;
+    height: 100%;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 34px 12px;
+    grid-template-rows: 20px 12px;
     grid-row-gap: 6px;
     justify-content: center;
     justify-items: center;

@@ -90,23 +90,15 @@ export default {
     box-sizing: border-box;
   }
   #home_page_background {
-    top: 0;
+    top: -7%;
     left: -20%;
     width: 140%;
-    height: 32vh;
-    background-color: #1890FF;
+    height: 40vh;
+    background: linear-gradient(180deg, rgba(24,144,255,1) 14%, rgba(145,213,255,1) 100%);
+    // background-color: #1890FF;
     border-radius: 100%;
     z-index: -1;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.09);
-    &:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-      background-color: #1890FF;
-    }
   }
   #home_page_title {
     top: 0;
@@ -124,4 +116,5 @@ export default {
     padding-bottom: 64px;
     box-sizing: border-box;
   }
+
 </style>
