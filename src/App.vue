@@ -111,7 +111,7 @@ export default {
   }
 
   .overlay-top, .overlay-bottom, .overlay-right, .overlay-left {
-    background: url("./assets/logo-transition.svg"), #096dd9 !important;
+    background: url("./assets/logo-transition.svg"), linear-gradient(180deg, rgba(24,144,255,1) 0%, rgba(52,246,242,1) 100%) !important;
     background-position: 50% 50% !important;
     background-size: 18vh, cover !important;
     background-repeat: no-repeat !important;
@@ -185,7 +185,7 @@ export default {
   .ant-tabs-nav-container {
     padding-top: 12px;
     box-sizing: border-box;
-    background: linear-gradient(90deg, rgba(9,109,217,1) 0%, rgba(24,144,255,1) 100%);
+    background: linear-gradient(90deg, rgba(24,144,255,1) 0%, rgba(145,213,255,1) 100%);
     color: white;
   }
   .ant-tabs-nav {

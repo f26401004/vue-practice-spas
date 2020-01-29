@@ -1,6 +1,6 @@
 <template lang="pug">
   div(id="info_page_root")
-    a-row(type="flex" justify="space-between" align="middle" style="height: 64px; margin: 0; background: linear-gradient(90deg, rgba(9,109,217,1) 0%, rgba(24,144,255,1) 100%); padding: 16px 24px; box-sizing: border-box;")
+    a-row(type="flex" justify="space-between" align="middle" style="height: 64px; margin: 0; background: linear-gradient(90deg, rgba(24,144,255,1) 0%, rgba(145,213,255,1) 100%); padding: 16px 24px; box-sizing: border-box;")
       h2(style="color: white; margin: 0;")
         a-icon(type="solution" style="margin-right: 12px;")
         span Meetings
