@@ -178,6 +178,7 @@ export default {
     position: relative;
     height: calc(100% - 84px);
     overflow-y: auto;
+    background: #fafafa;
   }
   .ant-tabs-bar {
     margin: 0 !important;
@@ -205,11 +206,11 @@ export default {
     background-position: center;
   }
   .ant-tabs-tab:hover {
-    background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%) center/15000% !important;
+    background: rgba(255, 255, 255, 0.33) radial-gradient(circle, transparent 1%, rgba(255, 255, 255, 0.33) 1%) center/15000% !important;
     transition:  0.8s all ease-out !important;
   }
   .ant-tabs-tab:active {
-    background-color: #6eb9f7 !important;
+    background-color: rgba(255, 255, 255, 0.33) !important;
     background-size: 100% !important;
     transition: background 0s !important;
   }
@@ -236,7 +237,7 @@ export default {
     top: 0;
     left: 0;
     pointer-events: none;
-    background-image: radial-gradient(circle,#000 10%,transparent 10.01%);
+    background-image: radial-gradient(circle,black 10%,transparent 10.01%);
     background-repeat: no-repeat;
     background-position: 50%;
     transform: scale(10,10);
@@ -248,4 +249,23 @@ export default {
     opacity: .2;
     transition: 0s;
   }
+
+  .slide-leave-active,
+  .slide-enter-active {
+    transition: .2s transform cubic-bezier(0.215, 0.61, 0.355, 1), .2s opacity cubic-bezier(0.215, 0.61, 0.355, 1);
+    overflow: hidden;
+    transform-origin: center top;
+    opacity: 0;
+  }
+  .slide-enter-to, .slide-leave {
+    // max-height: 40px;
+    transform: scaleY(100%);
+    opacity: 1;
+
+  }
+  .slide-enter, .slide-leave-to {
+    // max-height: 0px;
+    transform: scaleY(0);
+  }
+
 </style>
