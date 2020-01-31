@@ -220,7 +220,12 @@ export default {
   }
   .ant-menu-item {
     border-bottom: none !important;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0!important;
+  }
+  .ant-menu::before, .ant-menu::after {
+    content: none !important;
   }
 
   .ripple {
@@ -258,13 +263,11 @@ export default {
     opacity: 0;
   }
   .slide-enter-to, .slide-leave {
-    // max-height: 40px;
     transform: scaleY(100%);
     opacity: 1;
 
   }
   .slide-enter, .slide-leave-to {
-    // max-height: 0px;
     transform: scaleY(0);
   }
 

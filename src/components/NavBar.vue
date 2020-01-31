@@ -35,7 +35,7 @@ export default {
       }
       return [
         { name: 'home', url: '/', icon: 'home' },
-        { name: 'meeting', url: '/meeting', icon: 'profile' },
+        // { name: 'meeting', url: '/meeting', icon: 'profile' },
         { name: 'login', url: '/login', icon: 'login' },
         { name: 'register', url: '/register', icon: 'user-add' },
         { name: 'info', url: '/info', icon: 'info-circle' }
@@ -83,7 +83,9 @@ export default {
     box-shadow: 6px 0 12px rgba(0, 0, 0, 0.09);
   }
   #nav_bar_menu {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
     grid-auto-flow: column;
     justify-content: space-between;
     justify-items: center;
@@ -95,7 +97,7 @@ export default {
     border-bottom: none !important;
   }
   .nav_bar_menu_item {
-    width: 48px;
+    position: relative;
     height: 100%;
     display: grid;
     grid-template-columns: 1fr;
