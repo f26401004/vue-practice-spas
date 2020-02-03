@@ -2,7 +2,8 @@ import Firebase from '@/firebase.js'
 
 const state = {
   currentUser: {},
-  userAvatar: ''
+  userAvatar: '',
+  userSchedules: []
 }
 
 const getters = {
@@ -22,6 +23,9 @@ const mutations = {
     Object.keys(data).forEach(key => {
       state.currentUser[key] = data[key]
     })
+  },
+  'ADD_userSchedules': (state, data) => {
+    state.userSchedules.push(data)
   }
 }
 
@@ -50,7 +54,7 @@ const actions = {
     // create user data in firestore
     Firebase.firestore().collection('users').doc(result.user.uid).set({
       attendance: 0,
-      activityRate: 0,
+      activity: 0,
       knowledge: 0,
       schedules: [],
       githubLink: '',
@@ -65,13 +69,24 @@ const actions = {
       email: email,
       username: username,
       attendance: 0,
-      activityRate: 0,
+      activity: 0,
       knowledge: 0,
       schedules: [],
       githubLink: '',
       facebookLink: '',
       linkedinLink: '',
       status: ''
+    })
+  },
+  loadSchedules: async ({ commit, state }) => {
+    if (state.currentUser.schedules.length === 0) {
+      return
+    }
+    // parallelly fetch the data and push it into array
+    state.currentUser.schedules.forEach(doc => {
+      doc.get().then(response => {
+        commit('ADD_userSchedules', response.data())
+      })
     })
   }
 }

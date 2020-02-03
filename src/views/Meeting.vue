@@ -12,24 +12,28 @@
           span . Here is our study group schedules recently.
       transition(name="slide")
         a-row(v-show="displaySearch" style="padding-top: 12px; margin: 0;")
-          a-input(size="large")
+          a-input(size="large" v-model="searchKeyword")
             a-icon(slot="prefix" type="search")
             a-tooltip(slot="suffix" title="Search the meeting by title or host")
               a-icon(type="info-circle" style="color: rgba(0, 0, 0, 0.45);")
-    a-row(ref="meetingContainer" style="overflow-y: auto; margin: 0; padding-bottom: 24px;")
+    a-row(ref="meetingContainer" style="overflow-y: auto; margin: 0 0 0 24px; padding-bottom: 24px;")
       transition(name="slide")
-        a-row(v-if="recentMeeting.mid && displayIncomingMeeting" style="margin: 24px 0  24px 24px; padding: 24px; box-sizing: border-box; border-radius: 12px 0 0 12px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.09);"
+        a-row(v-if="recentMeeting.mid && displayIncomingMeeting" style="margin: 24px 0; padding: 24px; box-sizing: border-box; border-radius: 12px 0 0 12px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.09);"
           :style="{ 'background-color': blue[4] }"
           class="ripple")
           h1(style="color: white;") Incoming Meeting
           p(style="color: white; margin: 0;") You have meeting schedule on <b>{{ recentMeeting.time | timestampToDate }}</b>. The topic is <b>{{ recentMeeting.title }}</b> Let's prepare to learn the new things!
           a-row
             a-button(shape="round" size="large" :style="{ 'color': blue.primary }" @click="displayIncomingMeeting = false") OK, GOT IT
-      a-divider(orientation="right" style="margin-top: 24px; padding: 0 24px; box-sizing: border-box;" :style="{ 'color': blue.primary }") ▼ Schedules | 6
-      a-timeline(style="margin-left: 24px;")
-        a-timeline-item(v-for="(meeting, index) of meetings" :key="`meeting-${meeting.mid}-${index}`" :data-index="index" )
+      a-divider(orientation="right" style="margin-top: 24px; box-sizing: border-box;" :style="{ 'color': blue.primary }") ▼ Schedules | {{ meetings.length }}
+      transition-group(tag="ul"
+        :class="['ant-timeline']"
+        enter-active-class="animated fadeIn faster"
+        leave-active-class="animated fadeOut faster")
+        a-timeline-item(v-for="(meeting, index) of displayMeetings" :key="`meeting-${meeting.mid}-${index}`"
+          :class="{'ant-timeline-item-last': index == displayMeetings.length - 1}")
           a-row(style="margin: 0px 0 0 12px;")
-            h3(:style="{ 'color': blue[6] }") {{ meeting.time }}
+            h3(:style="{ 'color': blue[6] }") {{ meeting.time | timestampToDate }}
             a-row(style="padding: 24px; box-sizing: border-box; border-radius: 12px 0 0 12px; background: linear-gradient(90deg, rgba(80,125,188,1) 0%, rgba(52,246,242,0.33) 100%), #507dbc; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.09);" class="ripple" )
               a-row(style="margin: 0;" type="flex" justify="space-between" align="middle")
                 div
@@ -40,10 +44,10 @@
                   a-icon(v-show="!checkJoin(meeting.mid)" type="minus")
               a-row
                 a-tag(color="#40a9ff") time
-                time(style="color: white;") {{ meeting.time }}
+                time(style="color: white;") {{ meeting.time | timestampToDate }}
               a-row(style="margin-top: 6px;")
                 a-tag(color="#40a9ff") host
-                label(style="color: white;") {{ meeting.host }}
+                label(style="color: white;") {{ meeting.host.username }}
 </template>
 
 <script>
@@ -55,26 +59,28 @@ export default {
       blue,
       displaySearch: false,
       displayIncomingMeeting: true,
+      searchKeyword: '',
       recentMeeting: {
         mid: '',
         title: '',
         description: '',
         time: '',
         host: ''
-      },
-      meetings: new Array(5).fill({
-        mid: '123',
-        title: 'Vue SPA guideline',
-        description: 'Vue SPA guideline descrption',
-        host: 'f26401004',
-        time: new Date().toDateString()
-      })
+      }
     }
   },
   computed: {
     ...mapState('user', {
-      currentUser: 'currentUser'
-    })
+      currentUser: 'currentUser',
+      currentUserSchedules: 'userSchedules'
+    }),
+    ...mapState('feature', {
+      meetings: 'meetings'
+    }),
+    displayMeetings: function () {
+      return this.meetings.filter(meeting => meeting.title.toLowerCase().indexOf(this.searchKeyword) !== -1 ||
+        meeting.host.username.toLowerCase().indexOf(this.searchKeyword) !== -1)
+    }
   },
   filters: {
     timestampToDate: function (value) {
@@ -83,18 +89,17 @@ export default {
     }
   },
   mounted: async function () {
-    if (this.currentUser.schedules.length > 0) {
-      const responseRecentMeeting = await this.currentUser.schedules[0].get()
+    if (this.currentUserSchedules.length > 0) {
       this.recentMeeting = {
         mid: this.currentUser.schedules[0].id,
-        ...responseRecentMeeting.data()
+        ...this.currentUserSchedules[0]
       }
     }
     this.$nextTick(() => {
       const originHeight = this.$refs.promptString.$el.clientHeight
       // add scroll event to meeting container and make transition on prompt string
       this.$refs.meetingContainer.$el.addEventListener('scroll', event => {
-        const height = Math.max(originHeight - this.$refs.meetingContainer.$el.scrollTop, 0)
+        const height = Math.floor(Math.max(originHeight - this.$refs.meetingContainer.$el.scrollTop, 0))
         this.$refs.promptString.$el.style.maxHeight = `${height}px`
       })
     })
@@ -102,24 +107,6 @@ export default {
   methods: {
     checkJoin: function (mid) {
       return this.currentUser.schedules.findIndex(target => target.mid === mid) === -1
-    },
-    meetingBeforeEnter: function (el) {
-      console.log(el)
-      el.style.display = 'none'
-    },
-    meetingEnter: function (el) {
-      const delay = el.dataset.index * 200
-      setTimeout(function () {
-        el.style.display = 'block'
-        el.classList.add('animated fadeIn')
-      }, delay)
-    },
-    meetingLeave: function (el) {
-      // const delay = el.dataset.index * 200
-      // setTimeout(function () {
-      //   el.style.display = 'block'
-      //   el.classList.add('animated fadeIn')
-      // }, delay)
     }
   }
 }
@@ -130,8 +117,8 @@ export default {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(2, auto);
+    align-content: flex-start;
     width: 100%;
-    background: #fafafa;
   }
 
   .slide-active {

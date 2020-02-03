@@ -26,7 +26,7 @@
           | <a href="https://firebase.google.com">Firebase</a>.
     a-row(type="flex" justify="center" align="middle" class="animated fadeIn delay-3")
       a-col(:xs="20" :sm="12" :md="8" :lg="6")
-        a-list(itemLayout="horizontal" :dataSource="test" style="font-size: 12px;")
+        a-list(itemLayout="horizontal" :dataSource="meetings" style="font-size: 12px;")
           a-list-item(slot="renderItem" slot-scope="item, index")
             a-list-item-meta(:description="item.description")
               a-avatar(slot="avatar" :src="item.icon")
@@ -36,13 +36,13 @@
                     label {{ item.title }}
                 a-col(:span="12")
                   a-row(type="flex" justify="end" align="middle")
-                    time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
+                    time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.time | timestampToDate }}
 </template>
 
 <script>
 import { blue, grey } from '@ant-design/colors'
 // import db from '@/db.js'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'home',
@@ -56,18 +56,16 @@ export default {
   computed: {
     ...mapGetters('user', {
       user: 'getCurrentUser'
+    }),
+    ...mapState('feature', {
+      meetings: 'meetings'
     })
   },
-  mounted: function () {
-    // setTimeout(() => {
-    //   this.test = new Array(3).fill({
-    //     title: 'Vue practice!!',
-    //     description: 'Practice vue framework and build a calendar APP for yourself!!',
-    //     date: new Date(),
-    //     join: false,
-    //     icon: ''
-    //   })
-    // }, 1000)
+  filters: {
+    timestampToDate: function (value) {
+      const time = new Date(value.seconds * 1000)
+      return time.toDateString()
+    }
   },
   methods: {
     ...mapMutations('user', ['SET_currentUser'])
@@ -95,9 +93,7 @@ export default {
     width: 140%;
     height: 40vh;
     background: linear-gradient(180deg, rgba(24,144,255,1) 14%, rgba(145,213,255,1) 100%);
-    // background-color: #1890FF;
     border-radius: 100%;
-    z-index: -1;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.09);
   }
   #home_page_title {

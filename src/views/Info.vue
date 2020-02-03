@@ -12,22 +12,23 @@
             a-icon(type="team")
             span Members
           div(style="height: 100%; overflow-y: auto; padding: 24px; box-sizing: border-box;")
-            a-divider(orientation="right" style="margin: 0;" :style="{ 'color': blue.primary }") ▼ Members | 6
-            a-list(:dataSource="test" type="horizontal")
-              a-lite-item(slot="renderItem" slot-scope="member, index")
-                a-card(hoverable style="height: 80px; margin-top: 16px; border-left: 8px solid #34F6F2;")
-                  a-card-meta
-                    a-row(slot="avatar" type="flex" justify="space-between" align="middle" style="margin: 0;")
-                      img(v-if="index < 3" :src="require(`@/assets/cup_${index + 1}.svg`)" width="24" height="24")
-                      h3(v-else :style="{ 'color': blue[7] }" style="width: 24px; text-align: center; margin: 0; font-weight: 700;") {{ index + 1 }}
-                      a-avatar(size="large" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" style="margin-left: 12px;")
-                    a-row(slot="description" type="flex" justify="space-between" align="middle" style="margin: 0;")
-                      div
-                        h3(:style="{ 'color': blue.primary }" style="margin: 0; font-weight: 700;") {{ member.username }}
-                        p(style="margin: 0;") Point: 128
-                      router-link(type="span" :to="`/profile/${member.uid}`")
-                        a-button(size="large" shape="circle" type="primary")
-                          a-icon(type="user")
+            a-divider(orientation="right" style="margin: 0;" :style="{ 'color': blue.primary }") ▼ Members | {{ members.length }}
+            a-row(style="margin: 0;")
+              a-card(v-for="(member, index) of members" :key="`member-${member.uid}-${index}`" hoverable style="width: 100%; height: 80px; margin-top: 16px; border-left: 8px solid #34F6F2;")
+                a-card-meta
+                  a-row(slot="avatar" type="flex" justify="space-between" align="middle" style="margin: 0;")
+                    img(v-if="index < 3" :src="require(`@/assets/cup_${index + 1}.svg`)" width="24" height="24")
+                    h3(v-else :style="{ 'color': blue[7] }" style="width: 24px; text-align: center; margin: 0; font-weight: 700;") {{ index + 1 }}
+                    a-avatar(size="large" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" style="margin-left: 12px;")
+                  a-row(slot="description" type="flex" justify="space-between" align="middle" style="margin: 0;")
+                    div
+                      h3(:style="{ 'color': blue.primary }" style="margin: 0; font-weight: 700;") {{ member.username }}
+                      p(style="margin: 0;") Point: {{ member.point }}
+                    router-link(type="span" :to="`/profile/${member.uid}`")
+                      a-button(size="large" shape="circle" type="primary")
+                        a-icon(type="user")
+            //- a-list(:dataSource="members" type="horizontal" :loading="loadMembers")
+            //-   a-list-item(slot="renderItem" slot-scope="member, index")
         a-tab-pane(key="3")
           span(slot="tab")
             a-icon(type="info-circle")
@@ -37,16 +38,19 @@
 
 <script>
 import { blue } from '@ant-design/colors'
+import { mapState } from 'vuex'
+
 export default {
   data: function () {
     return {
       blue,
-      test: new Array(6).fill({
-        username: 'test',
-        status: 'test status',
-        uid: 'xFjojWL60SUUCAqE02KmYU2tHG23'
-      })
+      loadMembers: true
     }
+  },
+  computed: {
+    ...mapState('feature', {
+      members: 'members'
+    })
   },
   methods: {
     showInfo: function () {

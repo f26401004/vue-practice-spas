@@ -9,7 +9,7 @@
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Firebase from '@/firebase.js'
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 import { blue } from '@ant-design/colors'
 import axios from 'axios'
 
@@ -53,11 +53,33 @@ export default {
         } catch (error) {
           console.log(error)
         }
+
+        // get user schedules
+        try {
+          await this.loadSchedules()
+        } catch (error) {
+          console.log(error)
+        }
+
+        // get members
+        try {
+          await this.loadMembers()
+        } catch (error) {
+          console.log(error)
+        }
+
+        try {
+          await this.loadMeetings()
+        } catch (error) {
+          console.log(error)
+        }
       }
     })
   },
   methods: {
-    ...mapMutations('user', ['SET_currentUser', 'SET_currentUserAvatar'])
+    ...mapMutations('user', ['SET_currentUser', 'SET_currentUserAvatar']),
+    ...mapActions('user', ['loadSchedules']),
+    ...mapActions('feature', ['loadMembers', 'loadMeetings'])
   }
 }
 </script>
@@ -73,6 +95,7 @@ export default {
     font-weight: 300;
     width: 100%;
     height: 100%;
+    background-color: #fafafa;
     overflow: hidden;
 
     -webkit-touch-callout: none;
@@ -88,26 +111,15 @@ export default {
     position: absolute !important;
   }
 
-  .delay-1 {
-    animation-delay: .6s;
+  @mixin delay-generate($count) {
+    $temp: calc((#{$count}s / 10) + 0.5s);
+    .delay-#{$count} {
+      animation-delay: #{$temp};
+    }
   }
-  .delay-2 {
-    animation-delay: .7s;
-  }
-  .delay-3 {
-    animation-delay: .8s;
-  }
-  .delay-4 {
-    animation-delay: .9s;
-  }
-  .delay-5 {
-    animation-delay: 1.0s;
-  }
-  .delay-6 {
-    animation-delay: 1.1s;
-  }
-  .delay-7 {
-    animation-delay: 1.2s;
+
+  @for $i from 0 through 7 {
+    @include delay-generate($i);
   }
 
   .overlay-top, .overlay-bottom, .overlay-right, .overlay-left {

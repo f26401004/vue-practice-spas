@@ -47,7 +47,7 @@
           a-row(type="flex" justify="start" align="middle" style="width: 100%; border-bottom: 1px solid rgba(0, 0, 0, 0.09); padding-bottom: 8px;")
             a-icon(type="schedule" :style="{ 'color': blue.primary }" style="margin-right: 12px; font-size: 16px;")
             label(:style="{ 'color': blue.primary }" style="font-weight: 900;") Schedule
-          a-list(itemLayout="horizontal" size="small" :dataSource="user.schedules" style="width: 100%; font-size: 12px; width: 100%;")
+          a-list(itemLayout="horizontal" size="small" :dataSource="schedules" :loading="loadSchedule" style="width: 100%; font-size: 12px; width: 100%;")
             a-list-item(slot="renderItem" slot-scope="item, index")
               a-list-item-meta(:description="item.description")
                 a-avatar(slot="avatar" :src="item.icon")
@@ -57,7 +57,7 @@
                       label {{ item.title }}
                   a-col(:span="12")
                     a-row(type="flex" justify="end" align="middle")
-                      time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.date.toDateString() }}
+                      time(:style="{ 'color': blue[2] }" style="text-align: right; font-weight: 300;") {{ item.time | timestampToDate }}
       a-modal(class="custom-modal-style"
         v-model="showLinkEditModal"
         @ok="updateLink"
@@ -104,6 +104,7 @@ export default {
         knowledge: 0,
         schedules: []
       },
+      schedules: [],
       avatar: '',
       linkType: '',
       newAddress: '',
@@ -120,7 +121,8 @@ export default {
   computed: {
     ...mapState('user', {
       currentUser: 'currentUser',
-      currentUserAvatar: 'userAvatar'
+      currentUserAvatar: 'userAvatar',
+      currentUserSchedules: 'userSchedules'
     }),
     ...mapState('feature', {
       loading: 'loading'
@@ -130,12 +132,23 @@ export default {
         return this.$route.params.uid === this.currentUser.uid
       }
       return this.currentUser.uid !== undefined
+    },
+    loadSchedule: function () {
+      return this.schedules.length !== this.user.schedules.slice(0, 5).length
+    }
+  },
+  filters: {
+    timestampToDate: function (value) {
+      const time = new Date(value.seconds * 1000)
+      return time.toDateString()
     }
   },
   beforeMount: async function () {
     if (!this.$route.params.uid) {
       this.user = this.currentUser
       this.avatar = this.currentUserAvatar
+      this.schedules = this.currentUserSchedules.slice(0, 5)
+      console.log(this.currentUserSchedules)
       return
     }
     // retrieve the other user's data
@@ -143,6 +156,7 @@ export default {
     let responseUser
     // display the loading effect
     this.SET_loading(true)
+    // retrieve user data
     try {
       const storageRef = Firebase.storage().ref()
       const url = await storageRef.child(`images/avatar/${this.$route.params.uid}`).getDownloadURL()
@@ -150,12 +164,24 @@ export default {
     } catch (error) {
       console.log(error.message)
     }
+    // retrieve user avatar
     try {
       const docRef = await Firebase.firestore().collection('users').doc(this.$route.params.uid)
       responseUser = await docRef.get()
       this.user = responseUser.data()
       this.avatar = responseAvatar ? window.URL.createObjectURL(responseAvatar.data) : null
       this.SET_loading(false)
+    } catch (error) {
+      console.log(error.message)
+    }
+    // retrieve user schedules
+    try {
+      this.user.schedules.slice(0, 5).forEach(doc => {
+        doc.get().then(response => {
+          this.schedules.push(response.data())
+          console.log(this.schedules)
+        })
+      })
     } catch (error) {
       console.log(error.message)
     }
