@@ -16,7 +16,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "meeting" */ '@/views/Meeting.vue')
+    component: () => import(/* webpackChunkName: "loggedin" */ '@/views/Meeting.vue')
   }, {
     path: '/login',
     name: 'login',
@@ -24,11 +24,11 @@ const routes = [
   }, {
     path: '/register',
     name: 'register',
-    component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue')
+    component: () => import(/* webpackChunkName: "login" */ '@/views/Register.vue')
   }, {
     path: '/profile',
     name: 'profile',
-    component: () => import(/* webpackChunkName: "profile" */ '@/views/Profile.vue'),
+    component: () => import(/* webpackChunkName: "loggedin" */ '@/views/Profile.vue'),
     beforeEnter: (to, from, next) => {
       const currentUser = Store.getters['user/getCurrentUser']
       if (!currentUser) {
@@ -44,11 +44,11 @@ const routes = [
   }, {
     path: '/profile/:uid',
     name: 'profile-uid',
-    component: () => import(/* webpackChunkName: "profile" */ '@/views/Profile.vue')
+    component: () => import(/* webpackChunkName: "loggedin" */ '@/views/Profile.vue')
   }, {
     path: '/info',
     name: 'info',
-    component: () => import(/* webpackChunkName: "info" */ '@/views/Info.vue')
+    component: () => import(/* webpackChunkName: "login" */ '@/views/Info.vue')
   }, {
     path: '/error/:code',
     name: 'error',

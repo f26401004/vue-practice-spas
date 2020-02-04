@@ -87,7 +87,6 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { blue } from '@ant-design/colors'
-import Firebase from '@/firebase'
 import axios from 'axios'
 import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
 
@@ -125,7 +124,8 @@ export default {
       currentUserSchedules: 'userSchedules'
     }),
     ...mapState('feature', {
-      loading: 'loading'
+      loading: 'loading',
+      firebase: 'firebase'
     }),
     isCurrentUser: function () {
       if (this.$route.params.uid) {
@@ -158,7 +158,7 @@ export default {
     this.SET_loading(true)
     // retrieve user data
     try {
-      const storageRef = Firebase.storage().ref()
+      const storageRef = this.firebase.storage().ref()
       const url = await storageRef.child(`images/avatar/${this.$route.params.uid}`).getDownloadURL()
       responseAvatar = await axios.get(url, { responseType: 'blob' })
     } catch (error) {
@@ -166,7 +166,7 @@ export default {
     }
     // retrieve user avatar
     try {
-      const docRef = await Firebase.firestore().collection('users').doc(this.$route.params.uid)
+      const docRef = await this.firebase.firestore().collection('users').doc(this.$route.params.uid)
       responseUser = await docRef.get()
       this.user = responseUser.data()
       this.avatar = responseAvatar ? window.URL.createObjectURL(responseAvatar.data) : null
@@ -209,7 +209,7 @@ export default {
       const metadata = {
         contentType: file.type
       }
-      const storageRef = await Firebase.storage().ref()
+      const storageRef = await this.firebase.storage().ref()
       const imageFile = storageRef.child(`images/avatar/${this.user.uid}`)
       try {
         this.loading = true
@@ -276,7 +276,7 @@ export default {
         this.updateLinkButtonLoading = true
         const data = {}
         data[`${this.linkType.toLowerCase()}Link`] = this.newAddress
-        const docRef = await Firebase.firestore().collection('users').doc(this.user.uid)
+        const docRef = await this.firebase.firestore().collection('users').doc(this.user.uid)
         await docRef.update(data)
         // update the local data
         this.UPDATE_currentUser(data)
@@ -301,7 +301,7 @@ export default {
       try {
         this.updateStatusButtonLoading = true
         const data = { status: this.newStatus }
-        const docRef = await Firebase.firestore().collection('users').doc(this.user.uid)
+        const docRef = await this.firebase.firestore().collection('users').doc(this.user.uid)
         await docRef.update(data)
         this.UPDATE_currentUser(data)
         this.updateStatusButtonLoading = false
@@ -342,7 +342,6 @@ export default {
     width: 100%;
     height: 45vh;
     background: linear-gradient(0deg, rgba(9,109,217,1) 0%, rgba(89,126,247,1) 100%);
-    z-index: -1;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.09);
     transform: skewY(-10deg) translateY(-48px);
     transition: .2s transform cubic-bezier(0.215, 0.61, 0.355, 1);

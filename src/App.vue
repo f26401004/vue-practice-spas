@@ -8,8 +8,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
-import Firebase from '@/firebase.js'
-import { mapMutations, mapGetters, mapActions } from 'vuex'
+import { mapMutations, mapGetters, mapActions, mapState } from 'vuex'
 import { blue } from '@ant-design/colors'
 import axios from 'axios'
 
@@ -24,16 +23,20 @@ export default {
     }
   },
   computed: {
+    ...mapState('feature', {
+      firebase: 'firebase'
+    }),
     ...mapGetters('feature', {
       loading: 'getLoading'
     })
   },
-  beforeCreate: function () {
+  beforeMount: function () {
+    console.log(this.firebase)
     // check if user have logined.
-    Firebase.auth().onAuthStateChanged(async user => {
+    this.firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         // get the user information
-        const docRef = await Firebase.firestore().collection('users').doc(user.uid)
+        const docRef = await this.firebase.firestore().collection('users').doc(user.uid)
         const responseUser = await docRef.get()
         const userData = responseUser.data()
 
@@ -46,7 +49,7 @@ export default {
 
         // get user avatar
         try {
-          const storageRef = Firebase.storage().ref()
+          const storageRef = this.firebase.storage().ref()
           const url = await storageRef.child(`images/avatar/${user.uid}`).getDownloadURL()
           const responseAvatar = await axios.get(url, { responseType: 'blob' })
           this.SET_currentUsrAvatar(window.URL.createObjectURL(responseAvatar.data))

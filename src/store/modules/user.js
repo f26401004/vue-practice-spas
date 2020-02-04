@@ -1,4 +1,5 @@
-import Firebase from '@/firebase.js'
+
+// import { auth, firestore } from '@/firebase.js'
 
 const state = {
   currentUser: {},
@@ -30,21 +31,21 @@ const mutations = {
 }
 
 const actions = {
-  login: async (context, { email, password }) => {
-    await Firebase.auth().signInWithEmailAndPassword(email, password)
+  login: async ({ rootState }, { email, password }) => {
+    await rootState.feature.firebase.auth().signInWithEmailAndPassword(email, password)
   },
-  logout: async () => {
-    await Firebase.auth().signOut()
+  logout: async ({ rootState }) => {
+    await rootState.feature.firebase.auth().signOut()
   },
-  register: async ({ commit }, { email, password, username, inviteCode }) => {
+  register: async ({ rootState, commit }, { email, password, username, inviteCode }) => {
     // check token exist
-    const docRef = Firebase.firestore().collection('tokens').doc(inviteCode)
+    const docRef = rootState.feature.firebase.firestore().collection('tokens').doc(inviteCode)
     const response = await docRef.get()
     const targetToken = response.data()
     if (targetToken.used) {
       throw new Error('Invalid invite code.')
     }
-    const result = await Firebase.auth().createUserWithEmailAndPassword(email, password)
+    const result = await rootState.featrue.firebase.auth().createUserWithEmailAndPassword(email, password)
     // update the displayName of user
     await result.user.updateProfile({
       displayName: username
@@ -52,7 +53,7 @@ const actions = {
     // update register token
     await docRef.set({ used: true })
     // create user data in firestore
-    Firebase.firestore().collection('users').doc(result.user.uid).set({
+    rootState.feature.firebase.firestore().collection('users').doc(result.user.uid).set({
       attendance: 0,
       activity: 0,
       knowledge: 0,
