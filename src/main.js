@@ -1,18 +1,17 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import Antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
+import '@/antDesignVueImport.js'
 import VueResponsive from 'vue-responsive'
 import VuePageTransition from 'vue-page-transition'
 // import workbox from './registerServiceWorker'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
 import '@/directives/longpress.js'
 import FastClick from 'fastclick'
+import Vue from 'vue'
 
-Vue.use(Antd)
 Vue.use(VueResponsive)
 Vue.use(VuePageTransition)
 // add workbox into vue instance

@@ -89,6 +89,7 @@ import { mapState, mapMutations } from 'vuex'
 import { blue } from '@ant-design/colors'
 import axios from 'axios'
 import { PerfectScrollbar } from 'vue2-perfect-scrollbar'
+import firebaseInit from '@/firebase.js'
 
 export default {
   data: function () {
@@ -124,8 +125,7 @@ export default {
       currentUserSchedules: 'userSchedules'
     }),
     ...mapState('feature', {
-      loading: 'loading',
-      firebase: 'firebase'
+      loading: 'loading'
     }),
     isCurrentUser: function () {
       if (this.$route.params.uid) {
@@ -144,6 +144,7 @@ export default {
     }
   },
   beforeMount: async function () {
+    const firebase = await firebaseInit(['storage', 'firestore'])
     if (!this.$route.params.uid) {
       this.user = this.currentUser
       this.avatar = this.currentUserAvatar
@@ -158,7 +159,7 @@ export default {
     this.SET_loading(true)
     // retrieve user data
     try {
-      const storageRef = this.firebase.storage().ref()
+      const storageRef = firebase.storage.ref()
       const url = await storageRef.child(`images/avatar/${this.$route.params.uid}`).getDownloadURL()
       responseAvatar = await axios.get(url, { responseType: 'blob' })
     } catch (error) {
@@ -166,7 +167,7 @@ export default {
     }
     // retrieve user avatar
     try {
-      const docRef = await this.firebase.firestore().collection('users').doc(this.$route.params.uid)
+      const docRef = await firebase.firestore.collection('users').doc(this.$route.params.uid)
       responseUser = await docRef.get()
       this.user = responseUser.data()
       this.avatar = responseAvatar ? window.URL.createObjectURL(responseAvatar.data) : null
@@ -206,10 +207,11 @@ export default {
       }
     },
     uploadImage: async function (file) {
+      const firebase = await firebaseInit(['storage'])
       const metadata = {
         contentType: file.type
       }
-      const storageRef = await this.firebase.storage().ref()
+      const storageRef = firebase.storage.ref()
       const imageFile = storageRef.child(`images/avatar/${this.user.uid}`)
       try {
         this.loading = true
@@ -267,6 +269,7 @@ export default {
       this.newStatus = this.user.status || 'Display slogan here. \nAnd you can at most two lines.'
     },
     updateLink: async function () {
+      const firebase = await firebaseInit(['firestore'])
       if (this.newAddress.length === 0) {
         this.$message.error(`New ${this.linkType} link address can not be empty!`)
         this.showLinkEditModal = false
@@ -276,7 +279,7 @@ export default {
         this.updateLinkButtonLoading = true
         const data = {}
         data[`${this.linkType.toLowerCase()}Link`] = this.newAddress
-        const docRef = await this.firebase.firestore().collection('users').doc(this.user.uid)
+        const docRef = await firebase.firestore.collection('users').doc(this.user.uid)
         await docRef.update(data)
         // update the local data
         this.UPDATE_currentUser(data)
@@ -288,6 +291,7 @@ export default {
       }
     },
     updateStatus: async function () {
+      const firebase = await firebaseInit(['firestore'])
       if (this.newStatus.length === 0) {
         this.$message.error('New status can not be empty!')
         this.showStatusEditModal = false
@@ -301,7 +305,7 @@ export default {
       try {
         this.updateStatusButtonLoading = true
         const data = { status: this.newStatus }
-        const docRef = await this.firebase.firestore().collection('users').doc(this.user.uid)
+        const docRef = await firebase.firestore.collection('users').doc(this.user.uid)
         await docRef.update(data)
         this.UPDATE_currentUser(data)
         this.updateStatusButtonLoading = false

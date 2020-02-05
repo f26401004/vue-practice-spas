@@ -1,11 +1,10 @@
 // import { firestore } from '@/firebase.js'
-import firebase from '@/firebase.js'
+import firebaseInit from '@/firebase.js'
 
 const state = {
   loading: false,
   members: [],
-  meetings: [],
-  firebase: firebase
+  meetings: []
 }
 
 const getters = {
@@ -26,7 +25,8 @@ const mutations = {
 
 const actions = {
   loadMembers: async ({ state, commit }) => {
-    const collectionRef = state.firebase.firestore().collection('users')
+    const firebase = await firebaseInit(['firestore'])
+    const collectionRef = firebase.firestore.collection('users')
     const snapshot = await collectionRef.get()
     const members = snapshot.docs.map(doc => {
       const data = doc.data()
@@ -45,7 +45,8 @@ const actions = {
     commit('SET_members', members)
   },
   loadMeetings: async ({ state, commit }) => {
-    const collectionRef = state.firebase.firestore().collection('meetings')
+    const firebase = await firebaseInit(['firestore'])
+    const collectionRef = firebase.firestore.collection('meetings')
     const snapshot = await collectionRef.get()
     const meetings = await Promise.all(snapshot.docs.map(async doc => {
       const data = doc.data()

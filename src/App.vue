@@ -8,9 +8,10 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
-import { mapMutations, mapGetters, mapActions, mapState } from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 import { blue } from '@ant-design/colors'
 import axios from 'axios'
+import firebaseInit from '@/firebase.js'
 
 export default {
   name: 'app',
@@ -23,22 +24,19 @@ export default {
     }
   },
   computed: {
-    ...mapState('feature', {
-      firebase: 'firebase'
-    }),
     ...mapGetters('feature', {
       loading: 'getLoading'
     })
   },
-  beforeMount: function () {
-    console.log(this.firebase)
-    // check if user have logined.
-    this.firebase.auth().onAuthStateChanged(async user => {
+  beforeMount: async function () {
+    const firebase = await firebaseInit(['firestore', 'auth', 'storage'])
+    firebase.auth.onAuthStateChanged(async user => {
       if (user) {
-        // get the user information
-        const docRef = await this.firebase.firestore().collection('users').doc(user.uid)
+        // get user information
+        const docRef = await firebase.firestore.collection('users').doc(user.uid)
         const responseUser = await docRef.get()
         const userData = responseUser.data()
+        console.log(userData)
 
         this.SET_currentUser({
           uid: user.uid,
@@ -49,33 +47,15 @@ export default {
 
         // get user avatar
         try {
-          const storageRef = this.firebase.storage().ref()
+          const storageRef = firebase.storage.ref()
           const url = await storageRef.child(`images/avatar/${user.uid}`).getDownloadURL()
           const responseAvatar = await axios.get(url, { responseType: 'blob' })
           this.SET_currentUsrAvatar(window.URL.createObjectURL(responseAvatar.data))
         } catch (error) {
           console.log(error)
         }
-
-        // get user schedules
-        try {
-          await this.loadSchedules()
-        } catch (error) {
-          console.log(error)
-        }
-
-        // get members
-        try {
-          await this.loadMembers()
-        } catch (error) {
-          console.log(error)
-        }
-
-        try {
-          await this.loadMeetings()
-        } catch (error) {
-          console.log(error)
-        }
+        // get user schedules, members, meetings
+        await Promise.all([this.loadSchedules(), this.loadMembers(), this.loadMeetings()])
       }
     })
   },
