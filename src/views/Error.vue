@@ -4,6 +4,11 @@
 
 <script>
 export default {
+  name: 'error',
+  props: {
+    statusCode: Number,
+    message: String
+  }
 }
 </script>
 

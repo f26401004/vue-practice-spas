@@ -30,8 +30,9 @@
         :class="['ant-timeline']"
         enter-active-class="animated fadeIn faster"
         leave-active-class="animated fadeOut faster")
-        a-timeline-item(v-for="(meeting, index) of displayMeetings" :key="`meeting-${meeting.mid}-${index}`"
-          :class="{'ant-timeline-item-last': index == displayMeetings.length - 1}")
+        router-link(tag="a-timeline-item" v-for="(meeting, index) of displayMeetings" :key="`meeting-${meeting.mid}-${index}`"
+          :class="{'ant-timeline-item-last': index == displayMeetings.length - 1}"
+          :to="`/meeting/${meeting.mid}`")
           a-row(style="margin: 0px 0 0 12px;")
             h3(:style="{ 'color': blue[6] }") {{ meeting.time | timestampToDate }}
             a-row(style="padding: 24px; box-sizing: border-box; border-radius: 12px 0 0 12px; background: linear-gradient(90deg, rgba(80,125,188,1) 0%, rgba(52,246,242,0.33) 100%), #507dbc; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.09);" class="ripple" )

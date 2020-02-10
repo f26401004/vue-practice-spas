@@ -41,6 +41,9 @@ export {
 export {
   default as PlusOutline
 } from '@ant-design/icons/lib/outline/PlusOutline'
+export {
+  default as InfoOutline
+} from '@ant-design/icons/lib/outline/InfoOutline'
 
 export {
   default as CameraFill
