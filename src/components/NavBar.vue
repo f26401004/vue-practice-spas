@@ -45,6 +45,7 @@ export default {
   watch: {
     '$route': function (to, from) {
       this.currentPage = to.name
+      console.log(this.currentPage)
     }
   },
   methods: {

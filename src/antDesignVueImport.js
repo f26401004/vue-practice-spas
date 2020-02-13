@@ -12,7 +12,7 @@ import {
   Button,
   // Calendar,
   Card,
-  // Collapse,
+  Collapse,
   // Carousel,
   // Cascader,
   Checkbox,
@@ -42,7 +42,7 @@ import {
   // Slider,
   Spin,
   // Statistic,
-  // Steps,
+  Steps,
   // Switch,
   // Table,
   // Transfer,
@@ -87,7 +87,7 @@ Vue.use(Breadcrumb)
 Vue.use(Button)
 // Vue.use(Calendar)
 Vue.use(Card)
-// Vue.use(Collapse)
+Vue.use(Collapse)
 // Vue.use(Carousel)
 // Vue.use(Cascader)
 Vue.use(Checkbox)
@@ -116,7 +116,7 @@ Vue.use(Select)
 // Vue.use(Slider)
 Vue.use(Spin)
 // Vue.use(Statistic)
-// Vue.use(Steps)
+Vue.use(Steps)
 // Vue.use(Switch)
 // Vue.use(Table)
 // Vue.use(Transfer)

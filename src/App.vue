@@ -266,4 +266,14 @@ export default {
     transform: scaleY(0);
   }
 
+  .ant-steps-item-content {
+    width: calc(100% - 48px) !important;
+    & > .ant-steps-item-title {
+      width: 100% !important;
+      padding: 0 !important;
+    }
+  }
+  .ant-card-body {
+    padding: 12px 24px !important;
+  }
 </style>

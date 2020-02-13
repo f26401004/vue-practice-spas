@@ -44,6 +44,15 @@ export {
 export {
   default as InfoOutline
 } from '@ant-design/icons/lib/outline/InfoOutline'
+export {
+  default as LoadingOutline
+} from '@ant-design/icons/lib/outline/LoadingOutline'
+export {
+  default as FileOutline
+} from '@ant-design/icons/lib/outline/FileOutline'
+export {
+  default as RightCircleOutline
+} from '@ant-design/icons/lib/outline/RightCircleOutline'
 
 export {
   default as CameraFill
